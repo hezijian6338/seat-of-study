@@ -44,6 +44,7 @@ public class CodeGenerator {
     /**
      * 通过数据表名称生成代码，Model 名称通过解析数据表名称获得，下划线转大驼峰的形式。
      * 如输入表名称 "t_user_detail" 将生成 TUserDetail、TUserDetailMapper、TUserDetailService ...
+     * (推荐还是自定义把)
      * @param tableNames 数据表名称...
      */
     public static void genCode(String... tableNames) {
@@ -180,6 +181,10 @@ public class CodeGenerator {
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
+
+            /**
+             * 这里选择是传统的 JSP/RESTFUL 前端构建~
+             */
             //cfg.getTemplate("controller-restful.ftl").process(data, new FileWriter(file));
             cfg.getTemplate("controller.ftl").process(data, new FileWriter(file));
 
