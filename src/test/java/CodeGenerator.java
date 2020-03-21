@@ -187,8 +187,8 @@ public class CodeGenerator {
             /**
              * 这里选择是传统的 JSP/RESTFUL 前端构建~
              */
-            //cfg.getTemplate("controller-restful.ftl").process(data, new FileWriter(file));
-            cfg.getTemplate("controller.ftl").process(data, new FileWriter(file));
+            cfg.getTemplate("controller-restful.ftl").process(data, new FileWriter(file));
+            //cfg.getTemplate("controller.ftl").process(data, new FileWriter(file));
 
             System.out.println(modelNameUpperCamel + "Controller.java 生成成功");
         } catch (Exception e) {

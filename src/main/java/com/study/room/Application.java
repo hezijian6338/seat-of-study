@@ -39,7 +39,7 @@ public class Application {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.company.project"))
+                .apis(RequestHandlerSelectors.basePackage("com.study.room"))
                 .paths(PathSelectors.any())
                 .build();
     }
