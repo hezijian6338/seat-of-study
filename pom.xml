@@ -114,6 +114,13 @@
             <artifactId>springfox-swagger2</artifactId>
             <version>${springfox-swagger-ui.version}</version>
         </dependency>
+
+        <!--jwt-->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.4.0</version>
+        </dependency>
     </dependencies>
 
     <build>

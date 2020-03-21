@@ -1,6 +1,7 @@
 package com.study.room.configurer;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,13 +17,21 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.study.room.core.Result;
 import com.study.room.core.ResultCode;
 import com.study.room.core.ServiceException;
+import com.study.room.model.User;
+import com.study.room.service.UserService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -43,6 +52,10 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 
     private final Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
+
+    @Autowired
+    private UserService userService;
+
     @Value("${spring.profiles.active}")
     private String env;//当前激活的配置文件
 
@@ -113,18 +126,77 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
                 @Override
                 public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
                     //验证签名
-                    boolean pass = validateSign(request);
-                    if (pass) {
+//                    boolean pass = validateSign(request);
+//                    if (pass) {
+//                        return true;
+//                    } else {
+//                        logger.warn("签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}",
+//                                request.getRequestURI(), getIpAddress(request), JSON.toJSONString(request.getParameterMap()));
+//
+//                        Result result = new Result();
+//                        result.setCode(ResultCode.UNAUTHORIZED).setMessage("签名认证失败");
+//                        responseResult(response, result);
+//                        return false;
+//                    }
+                    Result result = new Result();
+                    logger.warn("签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}",
+                            request.getRequestURI(), getIpAddress(request), JSON.toJSONString(request.getParameterMap()));
+                    String token = request.getHeader("token");// 从 http 请求头中取出 token
+                    // 如果不是映射到方法直接通过
+                    if (!(handler instanceof HandlerMethod)) {
                         return true;
-                    } else {
-                        logger.warn("签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}",
-                                request.getRequestURI(), getIpAddress(request), JSON.toJSONString(request.getParameterMap()));
-
-                        Result result = new Result();
-                        result.setCode(ResultCode.UNAUTHORIZED).setMessage("签名认证失败");
-                        responseResult(response, result);
-                        return false;
                     }
+                    HandlerMethod handlerMethod = (HandlerMethod) handler;
+                    Method method = handlerMethod.getMethod();
+                    //检查是否有passtoken注释，有则跳过认证
+                    if (method.isAnnotationPresent(PassToken.class)) {
+                        PassToken passToken = method.getAnnotation(PassToken.class);
+                        if (passToken.required()) {
+                            return true;
+                        }
+                    }
+                    //检查有没有需要用户权限的注解
+                    if (method.isAnnotationPresent(UserLoginToken.class)) {
+                        UserLoginToken userLoginToken = method.getAnnotation(UserLoginToken.class);
+                        if (userLoginToken.required()) {
+                            // 执行认证
+                            if (token == null) {
+                                result.setCode(ResultCode.UNAUTHORIZED).setMessage("无token，请重新登录");
+                                responseResult(response, result);
+                                return false;
+//                                throw new RuntimeException("无token，请重新登录");
+                            }
+                            // 获取 token 中的 user id
+                            String userId;
+                            try {
+                                userId = JWT.decode(token).getAudience().get(0);
+                            } catch (JWTDecodeException j) {
+                                result.setCode(ResultCode.UNAUTHORIZED).setMessage("401");
+                                responseResult(response, result);
+                                return false;
+//                                throw new RuntimeException("401");
+                            }
+                            User user = userService.findById(userId);
+                            if (user == null) {
+                                result.setCode(ResultCode.NOT_FOUND).setMessage("用户不存在，请重新登录");
+                                responseResult(response, result);
+                                return false;
+//                                throw new RuntimeException("用户不存在，请重新登录");
+                            }
+                            // 验证 token
+                            JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword())).build();
+                            try {
+                                jwtVerifier.verify(token);
+                            } catch (JWTVerificationException e) {
+                                result.setCode(ResultCode.UNAUTHORIZED).setMessage("401");
+                                responseResult(response, result);
+                                return false;
+//                                throw new RuntimeException("401");
+                            }
+                            return true;
+                        }
+                    }
+                    return true;
                 }
             });
         }

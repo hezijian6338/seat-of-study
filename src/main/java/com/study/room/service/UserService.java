@@ -19,6 +19,6 @@ public interface UserService extends Service<User> {
      * @Author hezijian6338
      * @Version  1.0
      */
-    boolean login(String username, String password);
+    User login(String username, String password);
     
 }
