@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.room.dao.SeatMapper">
+  <resultMap id="BaseResultMap" type="com.study.room.model.Seat">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="room_number" jdbcType="VARCHAR" property="roomNumber" />
+    <result column="seats" jdbcType="VARCHAR" property="seats" />
+    <result column="seats_count" jdbcType="INTEGER" property="seatsCount" />
+    <result column="seats_available" jdbcType="INTEGER" property="seatsAvailable" />
+    <result column="seats_unavailabe" jdbcType="INTEGER" property="seatsUnavailabe" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="created_time" jdbcType="VARCHAR" property="createdTime" />
+    <result column="updated_time" jdbcType="VARCHAR" property="updatedTime" />
+  </resultMap>
+</mapper>

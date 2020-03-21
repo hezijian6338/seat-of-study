@@ -11,16 +11,16 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.company.project.core.ProjectConstant.*;
+import static com.study.room.core.ProjectConstant.*;
 
 /**
  * 代码生成器，根据数据表名称生成对应的Model、Mapper、Service、Controller简化开发。
  */
 public class CodeGenerator {
     //JDBC配置，请修改为你项目的实际配置
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/test";
-    private static final String JDBC_USERNAME = "root";
-    private static final String JDBC_PASSWORD = "123456";
+    private static final String JDBC_URL = "jdbc:mysql://hezijian6338.ddns.net:3306/study_room";
+    private static final String JDBC_USERNAME = "study_room";
+    private static final String JDBC_PASSWORD = "study_room";
     private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 
     private static final String PROJECT_PATH = System.getProperty("user.dir");//项目在硬盘上的基础路径
@@ -37,7 +37,9 @@ public class CodeGenerator {
     private static final String DATE = new SimpleDateFormat("yyyy/MM/dd").format(new Date());//@date
 
     public static void main(String[] args) {
-        genCode("输入表名");
+        genCodeByCustomModelName("user", "User");
+        genCodeByCustomModelName("seat", "Seat");
+        genCodeByCustomModelName("footprint", "Footprint");
         //genCodeByCustomModelName("输入表名","输入自定义Model名称");
     }
 

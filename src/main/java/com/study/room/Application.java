@@ -1,4 +1,4 @@
-package com.company.project;
+package com.study.room;
 
 import io.swagger.annotations.ApiOperation;
 import org.springframework.boot.SpringApplication;

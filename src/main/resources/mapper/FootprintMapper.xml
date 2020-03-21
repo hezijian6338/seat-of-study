@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.room.dao.FootprintMapper">
+  <resultMap id="BaseResultMap" type="com.study.room.model.Footprint">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="room_number" jdbcType="VARCHAR" property="roomNumber" />
+    <result column="seats_number" jdbcType="VARCHAR" property="seatsNumber" />
+    <result column="stay_time" jdbcType="VARCHAR" property="stayTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="montent_tag" jdbcType="VARCHAR" property="montentTag" />
+    <result column="created_time" jdbcType="VARCHAR" property="createdTime" />
+    <result column="updated_time" jdbcType="VARCHAR" property="updatedTime" />
+  </resultMap>
+</mapper>

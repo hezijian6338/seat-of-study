@@ -1,4 +1,4 @@
-package com.company.project.utils;
+package com.study.room.utils;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.util.StringUtils;
