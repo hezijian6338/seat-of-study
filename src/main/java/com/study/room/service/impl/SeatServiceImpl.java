@@ -19,9 +19,45 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
     @Resource
     private SeatMapper seatMapper;
 
+    /**
+     * @param room_num
+     * @param row
+     * @param col
+     * @Method haveSeat
+     * TODO: 进行正常座位坐下
+     * @Return boolean
+     * @Exception
+     * @Date 2020/3/21 5:34 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
     @Override
     public boolean haveSeat(String room_num, int row, int col) {
-        Seat seat = this.findBy("room_number", room_num);
+        // 传递的座位位置信息有误
+        if (row == 0 || col == 0)
+            return false;
+
+        Seat seats = this.findBy("room_number", room_num);
+        String[] seat_list = seats.getSeats().split(",");
+
+        // 判断获取座位的行数是否大于数组的大小
+        if (row <= seat_list.length) {
+            String seat_row = seat_list[row - 1];
+            char[] seat_col = seat_row.toCharArray();
+
+            // 判断获取座位的列数是否大于数组的大小
+            if (col <= seat_col.length) {
+                char status = seat_col[col - 1];
+                if (status == 1) {
+                    return false;
+                }
+                if (status == 0) {
+                    // 返回可以坐下, 并且设置为坐下
+                    seat_col[col - 1] = 1;
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
