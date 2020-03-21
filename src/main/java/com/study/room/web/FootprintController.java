@@ -27,7 +27,7 @@ public class FootprintController {
     }
 
     @DeleteMapping("/{id}")
-    public Result delete(@PathVariable Integer id) {
+    public Result delete(@PathVariable String id) {
         footprintService.deleteById(id);
         return ResultGenerator.genSuccessResult();
     }
@@ -39,7 +39,7 @@ public class FootprintController {
     }
 
     @GetMapping("/{id}")
-    public Result detail(@PathVariable Integer id) {
+    public Result detail(@PathVariable String id) {
         Footprint footprint = footprintService.findById(id);
         return ResultGenerator.genSuccessResult(footprint);
     }

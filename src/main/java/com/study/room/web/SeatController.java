@@ -27,7 +27,7 @@ public class SeatController {
     }
 
     @DeleteMapping("/{id}")
-    public Result delete(@PathVariable Integer id) {
+    public Result delete(@PathVariable String id) {
         seatService.deleteById(id);
         return ResultGenerator.genSuccessResult();
     }
@@ -39,7 +39,7 @@ public class SeatController {
     }
 
     @GetMapping("/{id}")
-    public Result detail(@PathVariable Integer id) {
+    public Result detail(@PathVariable String id) {
         Seat seat = seatService.findById(id);
         return ResultGenerator.genSuccessResult(seat);
     }

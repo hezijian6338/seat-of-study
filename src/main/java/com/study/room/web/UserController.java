@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public Result delete(@PathVariable Integer id) {
+    public Result delete(@PathVariable String id) {
         userService.deleteById(id);
         return ResultGenerator.genSuccessResult();
     }
@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Result detail(@PathVariable Integer id) {
+    public Result detail(@PathVariable String id) {
         User user = userService.findById(id);
         return ResultGenerator.genSuccessResult(user);
     }

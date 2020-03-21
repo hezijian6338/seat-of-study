@@ -19,4 +19,14 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
     @Resource
     private SeatMapper seatMapper;
 
+    @Override
+    public boolean haveSeat(String room_num, int row, int col) {
+        Seat seat = this.findBy("room_number", room_num);
+        return false;
+    }
+
+    @Override
+    public boolean leaveSeat(String room_num, int row, int col) {
+        return false;
+    }
 }
