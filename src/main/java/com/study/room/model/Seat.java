@@ -3,6 +3,19 @@ package com.study.room.model;
 import javax.persistence.*;
 
 public class Seat {
+
+    interface STATUS {
+        /**
+         * 座位为空
+         */
+        Integer EMPTY = 0;
+
+        /**
+         * 座位被坐下
+         */
+        Integer FULL = 1;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;

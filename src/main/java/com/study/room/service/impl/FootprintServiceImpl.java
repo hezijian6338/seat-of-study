@@ -5,6 +5,8 @@ import com.study.room.dto.FootprintDTO;
 import com.study.room.model.Footprint;
 import com.study.room.service.FootprintService;
 import com.study.room.core.AbstractService;
+import com.study.room.utils.Tools;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,16 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     private FootprintMapper footprintMapper;
 
     @Override
-    public boolean haveSeat(FootprintDTO footprint) {
+    public boolean haveSeat(FootprintDTO footprintDTO) {
+        Footprint footprint = new Footprint();
+
+        // 直接映射过去, 填充完整
+        BeanUtils.copyProperties(footprintDTO, footprint);
+
+        // 时间填充需要补充
+        footprint.setCreatedTime(Tools.getStringTimeStamp());
+        footprint.setUpdatedTime(Tools.getStringTimeStamp());
+
         return false;
     }
 

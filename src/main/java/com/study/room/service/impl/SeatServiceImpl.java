@@ -2,8 +2,10 @@ package com.study.room.service.impl;
 
 import com.study.room.dao.SeatMapper;
 import com.study.room.model.Seat;
+import com.study.room.service.FootprintService;
 import com.study.room.service.SeatService;
 import com.study.room.core.AbstractService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,9 @@ import java.util.ArrayList;
 public class SeatServiceImpl extends AbstractService<Seat> implements SeatService {
     @Resource
     private SeatMapper seatMapper;
+
+    @Autowired
+    private FootprintService footprintService;
 
     /**
      * @param room_num
@@ -61,6 +66,7 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                     seats.setSeats(seat_list.toString());
 
                     this.update(seats);
+
                     return true;
                 }
             }

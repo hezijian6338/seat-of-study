@@ -33,7 +33,7 @@ public class FootprintDTO {
     /**
      * 心情标签 (数组, 用 ,分隔)
      */
-    private String montentTag;
+    private String momentTag;
 
     /**
      * 坐下时间
@@ -151,7 +151,7 @@ public class FootprintDTO {
      * @return montent_tag - 心情标签 (数组, 用 ,分隔)
      */
     public String getMontentTag() {
-        return montentTag;
+        return momentTag;
     }
 
     /**
@@ -160,7 +160,7 @@ public class FootprintDTO {
      * @param montentTag 心情标签 (数组, 用 ,分隔)
      */
     public void setMontentTag(String montentTag) {
-        this.montentTag = montentTag;
+        this.momentTag = montentTag;
     }
 
     /**

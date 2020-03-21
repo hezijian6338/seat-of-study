@@ -3,6 +3,25 @@ package com.study.room.model;
 import javax.persistence.*;
 
 public class Footprint {
+
+    interface STATUS {
+        /**
+         * 正常坐下
+         */
+        Integer IN = 1;
+
+        /**
+         * 正常离开
+         */
+        Integer OUT = -1;
+
+        /**
+         * 暂时离开
+         */
+        Integer TEMP = 0;
+    }
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
@@ -36,8 +55,8 @@ public class Footprint {
     /**
      * 心情标签 (数组, 用 ,分隔)
      */
-    @Column(name = "montent_tag")
-    private String montentTag;
+    @Column(name = "moment_tag")
+    private String momentTag;
 
     /**
      * 坐下时间
@@ -157,7 +176,7 @@ public class Footprint {
      * @return montent_tag - 心情标签 (数组, 用 ,分隔)
      */
     public String getMontentTag() {
-        return montentTag;
+        return momentTag;
     }
 
     /**
@@ -166,7 +185,7 @@ public class Footprint {
      * @param montentTag 心情标签 (数组, 用 ,分隔)
      */
     public void setMontentTag(String montentTag) {
-        this.montentTag = montentTag;
+        this.momentTag = montentTag;
     }
 
     /**
