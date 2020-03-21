@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 
 
 /**
@@ -54,6 +55,12 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                 if (status == 0) {
                     // 返回可以坐下, 并且设置为坐下
                     seat_col[col - 1] = 1;
+
+                    System.out.println("检查列表是否为引用类型相关的修改: " + seat_list);
+                    seat_list[row - 1] = seat_col.toString();
+                    seats.setSeats(seat_list.toString());
+
+                    this.update(seats);
                     return true;
                 }
             }

@@ -1,6 +1,7 @@
 package com.study.room.service.impl;
 
 import com.study.room.dao.FootprintMapper;
+import com.study.room.dto.FootprintDTO;
 import com.study.room.model.Footprint;
 import com.study.room.service.FootprintService;
 import com.study.room.core.AbstractService;
@@ -19,4 +20,18 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     @Resource
     private FootprintMapper footprintMapper;
 
+    @Override
+    public boolean haveSeat(FootprintDTO footprint) {
+        return false;
+    }
+
+    @Override
+    public boolean leaveSeat(FootprintDTO footprint) {
+        return false;
+    }
+
+    @Override
+    public boolean pauseSeat(FootprintDTO footprint) {
+        return false;
+    }
 }
