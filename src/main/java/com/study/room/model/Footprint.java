@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 public class Footprint {
 
-    interface STATUS {
+    public interface STATUS {
         /**
          * 正常坐下
          */
