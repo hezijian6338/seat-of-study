@@ -5,9 +5,6 @@ package com.study.room.dto;
  */
 public class FootprintDTO {
 
-    private String id;
-
-
     private String userId;
 
     /**
@@ -48,16 +45,16 @@ public class FootprintDTO {
     /**
      * @return id
      */
-    public String getId() {
-        return id;
-    }
+//    public String getId() {
+//        return id;
+//    }
 
     /**
      * @param id
      */
-    public void setId(String id) {
-        this.id = id;
-    }
+//    public void setId(String id) {
+//        this.id = id;
+//    }
 
     /**
      * @return user_id

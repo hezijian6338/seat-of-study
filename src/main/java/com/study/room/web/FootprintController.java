@@ -3,6 +3,7 @@ package com.study.room.web;
 import com.study.room.configurer.UserLoginToken;
 import com.study.room.core.Result;
 import com.study.room.core.ResultGenerator;
+import com.study.room.dto.FootprintDTO;
 import com.study.room.model.Footprint;
 import com.study.room.service.FootprintService;
 import com.github.pagehelper.PageHelper;

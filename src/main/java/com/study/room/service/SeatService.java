@@ -9,6 +9,20 @@ import com.study.room.core.Service;
 public interface SeatService extends Service<Seat> {
 
     /**
+     * @Method checkSeat
+     * TODO: 检查座位是否可以坐下, 返回不可以的原因
+     * @param room_num
+     * @param row
+     * @param col
+     * @Return int
+     * @Exception
+     * @Date 2020/3/22 11:53 AM
+     * @Author hezijian6338
+     * @Version  1.0
+     */
+    int checkSeat(String room_num, int row, int col);
+
+    /**
      * @Method haveSeat
      * TODO: 扫描传递参数坐下座位
      * @param row
