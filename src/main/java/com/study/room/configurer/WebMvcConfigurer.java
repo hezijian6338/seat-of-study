@@ -42,6 +42,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -55,6 +56,10 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 
     @Autowired
     private UserService userService;
+
+
+    // 定义一个线程域，存放登录用户
+    private static final ThreadLocal<User> thread = new ThreadLocal<>();
 
     @Value("${spring.profiles.active}")
     private String env;//当前激活的配置文件
@@ -114,8 +119,24 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
     //解决跨域问题
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        //registry.addMapping("/**");
+        registry.addMapping("/**")//设置允许跨域的路径
+                .allowedOrigins("*")//设置允许跨域请求的域名
+                .allowCredentials(true)//是否允许证书 不再默认开启
+                .allowedMethods("GET", "POST", "PUT", "DELETE")//设置允许的方法
+                .maxAge(3600);//跨域允许时间
     }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        super.addResourceHandlers(registry);
+
+    }
+
 
     //添加拦截器
     @Override
@@ -187,6 +208,9 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
                             JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword())).build();
                             try {
                                 jwtVerifier.verify(token);
+
+                                // 存放到线程中
+                                thread.set(user);
                             } catch (JWTVerificationException e) {
                                 result.setCode(ResultCode.UNAUTHORIZED).setMessage("401");
                                 responseResult(response, result);
@@ -198,9 +222,21 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
                     }
                     return true;
                 }
+
+                @Override
+                public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+                    //程序运行结束之后，删除线程
+                    thread.remove();
+                }
             });
         }
     }
+
+
+    public static User getLoginUser() {
+        return thread.get();
+    }
+
 
     private void responseResult(HttpServletResponse response, Result result) {
         response.setCharacterEncoding("UTF-8");

@@ -50,6 +50,7 @@ public class UserController {
         return ResultGenerator.genSuccessResult();
     }
 
+    @UserLoginToken
     @PutMapping
     public Result update(@RequestBody User user) {
         userService.update(user);
