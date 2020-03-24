@@ -5,6 +5,7 @@ import com.study.room.model.Seat;
 import com.study.room.service.FootprintService;
 import com.study.room.service.SeatService;
 import com.study.room.core.AbstractService;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 @Service
 @Transactional
 public class SeatServiceImpl extends AbstractService<Seat> implements SeatService {
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(SeatServiceImpl.class);
+
     @Resource
     private SeatMapper seatMapper;
 

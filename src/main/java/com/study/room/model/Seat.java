@@ -1,6 +1,7 @@
 package com.study.room.model;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 public class Seat {
 
@@ -60,10 +61,10 @@ public class Seat {
     private Integer status;
 
     @Column(name = "created_time")
-    private String createdTime;
+    private Timestamp createdTime;
 
     @Column(name = "updated_time")
-    private String updatedTime;
+    private Timestamp updatedTime;
 
     /**
      * @return id
@@ -208,28 +209,28 @@ public class Seat {
     /**
      * @return created_time
      */
-    public String getCreatedTime() {
+    public Timestamp getCreatedTime() {
         return createdTime;
     }
 
     /**
      * @param createdTime
      */
-    public void setCreatedTime(String createdTime) {
+    public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
 
     /**
      * @return updated_time
      */
-    public String getUpdatedTime() {
+    public Timestamp getUpdatedTime() {
         return updatedTime;
     }
 
     /**
      * @param updatedTime
      */
-    public void setUpdatedTime(String updatedTime) {
+    public void setUpdatedTime(Timestamp updatedTime) {
         this.updatedTime = updatedTime;
     }
 }

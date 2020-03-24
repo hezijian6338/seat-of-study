@@ -18,9 +18,14 @@ public class FootprintDTO {
     private String seatsNumber;
 
     /**
+     * 学生希望自习的时间
+     */
+    private int wantedTime;
+
+    /**
      * 存放时间戳差
      */
-    private String stayTime;
+    private int stayTime;
 
     /**
      * 0: 暂时离开(保留90分钟); 1: 正常坐下(时间选择); -1: 正常离开(结束计时)
@@ -111,7 +116,7 @@ public class FootprintDTO {
      *
      * @return stay_time - 存放时间戳差
      */
-    public String getStayTime() {
+    public int getStayTime() {
         return stayTime;
     }
 
@@ -120,7 +125,7 @@ public class FootprintDTO {
      *
      * @param stayTime 存放时间戳差
      */
-    public void setStayTime(String stayTime) {
+    public void setStayTime(int stayTime) {
         this.stayTime = stayTime;
     }
 
@@ -195,4 +200,13 @@ public class FootprintDTO {
 //        public void setUpdatedTime(String updatedTime) {
 //            this.updatedTime = updatedTime;
 //        }
+
+
+    public void setWantedTime(int wantedTime) {
+        this.wantedTime = wantedTime;
+    }
+
+    public int getWantedTime() {
+        return wantedTime;
+    }
 }

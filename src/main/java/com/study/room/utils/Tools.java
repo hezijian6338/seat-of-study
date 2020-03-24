@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.study.room.model.User;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -14,13 +15,17 @@ public class Tools {
      * @param
      * @Method getTimeStamp
      * TODO: 获取系统时间戳
-     * @Return long
+     * @Return Timestamp
      * @Exception
      * @Date 2019/8/13 下午2:03
      * @Author hezijian6338
      * @Version 1.0
      */
-    public static long getTimeStamp() {
+    public static Timestamp getTimeStamp() {
+        return new Timestamp(new Date().getTime());
+    }
+
+    public static long getLongTimeStamp() {
         return new Date().getTime();
     }
 

@@ -30,8 +30,8 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         BeanUtils.copyProperties(footprintDTO, footprint);
 
         // 时间填充需要补充
-        footprint.setCreatedTime(Tools.getStringTimeStamp());
-        footprint.setUpdatedTime(Tools.getStringTimeStamp());
+        footprint.setCreatedTime(Tools.getTimeStamp());
+        footprint.setUpdatedTime(Tools.getTimeStamp());
 
         this.update(footprint);
 
@@ -51,7 +51,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             BeanUtils.copyProperties(footprintDTO, footprint);
 
             // 更新当前时间为离开时间
-            footprint.setUpdatedTime(Tools.getStringTimeStamp());
+            footprint.setUpdatedTime(Tools.getTimeStamp());
 
             // 状态修改为离开
             footprint.setStatus(Footprint.STATUS.OUT);
@@ -60,7 +60,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             // 存在过暂离的情况, 自习时间本不为空
             String staty_time = footprintDTO.getStayTime();
             // 计算当次自习时间
-//            staty_time = (Tools.getTimeStamp())
+//            staty_time = (Tools.getTimeStamp() - )
 
             // 跟新足迹内容
             this.update(footprint);
@@ -78,7 +78,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             BeanUtils.copyProperties(footprintDTO, footprint);
 
             // 更新当前时间为暂停时间
-            footprint.setUpdatedTime(Tools.getStringTimeStamp());
+            footprint.setUpdatedTime(Tools.getTimeStamp());
 
             // 状态修改为暂时离开
             footprint.setStatus(Footprint.STATUS.TEMP);

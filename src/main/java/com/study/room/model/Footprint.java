@@ -1,6 +1,7 @@
 package com.study.room.model;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 public class Footprint {
 
@@ -42,10 +43,16 @@ public class Footprint {
     private String seatsNumber;
 
     /**
+     * 学生希望自习的时间
+     */
+    @Column(name = "wanted_time")
+    private int wantedTime;
+
+    /**
      * 存放时间戳差
      */
     @Column(name = "stay_time")
-    private String stayTime;
+    private int stayTime;
 
     /**
      * 0: 暂时离开(保留90分钟); 1: 正常坐下(时间选择); -1: 正常离开(结束计时)
@@ -62,13 +69,13 @@ public class Footprint {
      * 坐下时间
      */
     @Column(name = "created_time")
-    private String createdTime;
+    private Timestamp createdTime;
 
     /**
      * 更新时间
      */
     @Column(name = "updated_time")
-    private String updatedTime;
+    private Timestamp updatedTime;
 
     /**
      * @return id
@@ -139,7 +146,7 @@ public class Footprint {
      *
      * @return stay_time - 存放时间戳差
      */
-    public String getStayTime() {
+    public int getStayTime() {
         return stayTime;
     }
 
@@ -148,7 +155,7 @@ public class Footprint {
      *
      * @param stayTime 存放时间戳差
      */
-    public void setStayTime(String stayTime) {
+    public void setStayTime(int stayTime) {
         this.stayTime = stayTime;
     }
 
@@ -193,7 +200,7 @@ public class Footprint {
      *
      * @return created_time - 坐下时间
      */
-    public String getCreatedTime() {
+    public Timestamp getCreatedTime() {
         return createdTime;
     }
 
@@ -202,7 +209,7 @@ public class Footprint {
      *
      * @param createdTime 坐下时间
      */
-    public void setCreatedTime(String createdTime) {
+    public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
 
@@ -211,7 +218,7 @@ public class Footprint {
      *
      * @return updated_time - 更新时间
      */
-    public String getUpdatedTime() {
+    public Timestamp getUpdatedTime() {
         return updatedTime;
     }
 
@@ -220,7 +227,25 @@ public class Footprint {
      *
      * @param updatedTime 更新时间
      */
-    public void setUpdatedTime(String updatedTime) {
+    public void setUpdatedTime(Timestamp updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    /**
+     * 设置学生希望自习的时间
+     *
+     * @param wantedTime 自习时间
+     */
+    public void setWantedTime(int wantedTime) {
+        this.wantedTime = wantedTime;
+    }
+
+    /**
+     * 返回学生希望自习的时间
+     *
+     * @return wantedTime 自习时间
+     */
+    public int getWantedTime() {
+        return wantedTime;
     }
 }
