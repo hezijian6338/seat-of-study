@@ -44,4 +44,11 @@ public interface FootprintService extends Service<Footprint> {
      * @Version  1.0
      */
     boolean pauseSeat(FootprintDTO footprint);
+
+    /**
+     * TODO: 检查该用户的座位剩余情况 (如果 没有坐下/已经过时间了 则返回 0)
+     * @Return int
+     * @Author hezijian6338
+     */
+    int checkTime(String user_id);
 }

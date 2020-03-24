@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -58,7 +60,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
 
             // TODO: 填充一共总自习时间
             // 存在过暂离的情况, 自习时间本不为空
-            String staty_time = footprintDTO.getStayTime();
+            int staty_time = footprintDTO.getStayTime();
             // 计算当次自习时间
 //            staty_time = (Tools.getTimeStamp() - )
 
@@ -90,6 +92,59 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         } else {
             // 状态不正确, 返回错误
             return false;
+        }
+    }
+
+    /**
+     * @Method checkTime
+     * TODO: 根据现在的用户, 检查现在状态为在坐的的数据
+     * @param user_id
+     * @Return int
+     * @Exception
+     * @Date 2020/3/24 7:49 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
+    @Override
+    public int checkTime(String user_id) {
+        // 检查当前用户在坐的数据
+        List<Footprint> footprintList = footprintMapper.checkTime(user_id, Footprint.STATUS.IN);
+        Footprint footprint = footprintList.get(0);
+
+        if (footprint == null)
+            return 0;
+        else {
+            int time = 0;
+
+            Timestamp current_time = Tools.getTimeStamp();
+
+            // 如果没有记录已经坐下的时间, 证明他没有离开过, 直接算就可以了
+            if (footprint.getStayTime() == 0) {
+
+                time = (current_time.getNanos() - footprint.getUpdatedTime().getNanos()) > footprint.getWantedTime() ? (current_time.getNanos() - footprint.getUpdatedTime().getNanos()) : 0;
+
+                // 时间已经用完, 修改状态为离开座位
+                if (time == 0) {
+                    footprint.setUpdatedTime(current_time);
+                    footprint.setStatus(Footprint.STATUS.OUT);
+                    this.update(footprint);
+                }
+
+                return time;
+            } else {
+                // 已经有坐下时间, 证明状态已经修改过
+
+                time = (current_time.getNanos() - footprint.getUpdatedTime().getNanos() + footprint.getStayTime()) > footprint.getStayTime() ? (current_time.getNanos() - footprint.getUpdatedTime().getNanos()) : 0;
+
+                // 时间已经用完, 修改状态为离开座位
+                if (time == 0) {
+                    footprint.setUpdatedTime(current_time);
+                    footprint.setStatus(Footprint.STATUS.OUT);
+                    this.update(footprint);
+                }
+
+                return time;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.study.room.web;
 
 import com.study.room.configurer.UserLoginToken;
+import com.study.room.configurer.WebMvcConfigurer;
 import com.study.room.core.Result;
 import com.study.room.core.ResultGenerator;
 import com.study.room.dto.FootprintDTO;
@@ -21,6 +22,13 @@ import java.util.List;
 public class FootprintController {
     @Resource
     private FootprintService footprintService;
+
+    @UserLoginToken
+    @GetMapping("/check/time")
+    public Result checkTime() {
+        WebMvcConfigurer.getLoginUser();
+        return null;
+    }
 
     @UserLoginToken
     @PostMapping

@@ -9,10 +9,22 @@
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="room_number" jdbcType="VARCHAR" property="roomNumber" />
     <result column="seats_number" jdbcType="VARCHAR" property="seatsNumber" />
+    <result column="wanted_time" jdbcType="TIMESTAMP" property="wantedTime" />
     <result column="stay_time" jdbcType="VARCHAR" property="stayTime" />
     <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="montent_tag" jdbcType="VARCHAR" property="montentTag" />
-    <result column="created_time" jdbcType="VARCHAR" property="createdTime" />
-    <result column="updated_time" jdbcType="VARCHAR" property="updatedTime" />
+    <result column="moment_tag" jdbcType="VARCHAR" property="montentTag" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
   </resultMap>
+
+  <sql id="fp">footprint</sql>
+
+  <select id="checkTime" resultType="com.study.room.model.Footprint">
+    SELECT
+    id, user_id, room_number, seats_number, wanted_time, status, moment_tag, created_time, updated_time
+    FROM
+    <include refid="fp"/>
+    WHERE user_id = #{user_id}
+    AND status = #{status}
+  </select>
 </mapper>
