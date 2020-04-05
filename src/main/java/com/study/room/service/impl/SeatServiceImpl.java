@@ -108,10 +108,10 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
             // 判断获取座位的列数是否大于数组的大小
             if (col <= seat_col.length) {
                 char status = seat_col[col - 1];
-                if (status == 1) {
+                if (status == Seat.SEAT.FULL) {
                     return false;
                 }
-                if (status == 0) {
+                if (status == Seat.SEAT.EMPTY) {
                     // 返回可以坐下, 并且设置为坐下
                     seat_col[col - 1] = 1;
 
@@ -128,8 +128,54 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         return false;
     }
 
+    /**
+     * @Method leaveSeat
+     * TODO: 进行正常的座位离开操作
+     * @param room_num
+     * @param row
+     * @param col
+     * @Return boolean
+     * @Exception
+     * @Date 2020/4/5 9:36 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
     @Override
     public boolean leaveSeat(String room_num, int row, int col) {
+        // 传递的座位位置信息有误
+        if (row == 0 || col == 0)
+            return false;
+
+        Seat seats = this.findBy("room_number", room_num);
+        String[] seat_list = seats.getSeats().split(",");
+
+        // 判断获取座位的行数是否大于数组的大小
+        if (row <= seat_list.length) {
+            String seat_row = seat_list[row - 1];
+            char[] seat_col = seat_row.toCharArray();
+
+            // 判断获取座位的列数是否大于数组的大小
+            if (col <= seat_col.length) {
+                char status = seat_col[col - 1];
+
+                // 状态为 0, 证明本来就没人坐
+                if (status == Seat.SEAT.EMPTY) {
+                    return false;
+                }
+                if (status == Seat.SEAT.FULL) {
+                    // 返回离开成功, 并修改状态为空
+                    seat_col[col - 1] = Seat.SEAT.EMPTY;
+
+                    System.out.println("检查列表是否为引用类型相关的修改: " + seat_list);
+                    seat_list[row - 1] = seat_col.toString();
+                    seats.setSeats(seat_list.toString());
+
+                    this.update(seats);
+
+                    return true;
+                }
+            }
+        }
         return false;
     }
 }
