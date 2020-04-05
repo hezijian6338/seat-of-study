@@ -51,4 +51,11 @@ public interface FootprintService extends Service<Footprint> {
      * @Author hezijian6338
      */
     int checkTime(String user_id);
+
+    /**
+     * TODO: 根据自习室编号, 座位编号返回当前的座位信息
+     * @Return com.study.room.model.Footprint
+     * @Author hezijian6338
+     */
+    Footprint checkSeatStatus(String room_number, String seats_number);
 }

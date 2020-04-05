@@ -12,4 +12,11 @@ public interface FootprintMapper extends Mapper<Footprint> {
      * @Author hezijian6338
      */
     List<Footprint> checkTime(String user_id, int status);
+
+    /**
+     * TODO: 根据自习室房间号, 自习室座位号, 返回前5条使用记录
+     * @Date 2020/4/5 8:28 PM
+     * @Author hezijian6338
+     */
+    List<Footprint> checkSeatStatus(String room_number, String seats_number);
 }

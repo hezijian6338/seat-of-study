@@ -24,14 +24,26 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     @Resource
     private FootprintMapper footprintMapper;
 
+    /**
+     * @param footprintDTO
+     * @Method haveSeat
+     * TODO: 找到座位坐下
+     * @Return boolean
+     * @Exception
+     * @Date 2020/4/5 8:03 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
     @Override
     public boolean haveSeat(FootprintDTO footprintDTO) {
+        // TODO: 完成基础逻辑
+
         Footprint footprint = new Footprint();
 
         // 直接映射过去, 填充完整
         BeanUtils.copyProperties(footprintDTO, footprint);
 
-        // 时间填充需要补充
+        // 时间填充需要补充 (√)
         footprint.setCreatedTime(Tools.getTimeStamp());
         footprint.setUpdatedTime(Tools.getTimeStamp());
 
@@ -40,9 +52,19 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         return false;
     }
 
+    /**
+     * @param footprintDTO
+     * @Method leaveSeat
+     * TODO: 离开正在使用的座位
+     * @Return boolean
+     * @Exception
+     * @Date 2020/4/5 8:04 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
     @Override
     public boolean leaveSeat(FootprintDTO footprintDTO) {
-        // FIXME: 需要添加一个方法, 根据状态和当前自习室编号座位号进行查询现有的座位足迹信息
+        // 需要添加一个方法, 根据状态和当前自习室编号座位号进行查询现有的座位足迹信息 (√)
 
 
         // 判断状态是否从正常坐下状态
@@ -59,10 +81,19 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             footprint.setStatus(Footprint.STATUS.OUT);
 
             // TODO: 填充一共总自习时间
+
             // 存在过暂离的情况, 自习时间本不为空
             int staty_time = footprintDTO.getStayTime();
-            // 计算当次自习时间
-//            staty_time = (Tools.getTimeStamp() - )
+            // 如果暂离不为空, 即是曾经暂离过
+            if (staty_time != 0) {
+                // 计算当次自习时间 (当前时间 - 上次更新时间 + 当前已有的时间)
+                staty_time = (int) (Tools.getLongTimeStamp() - footprint.getUpdatedTime().getTime() + staty_time);
+                footprint.setStayTime(staty_time);
+            } else {
+                // 没有进行过暂离 (自习时间为空), 直接当前时间 - 更新时间即可
+                staty_time = (int) (Tools.getLongTimeStamp() - footprint.getUpdatedTime().getTime());
+                footprint.setStayTime(staty_time);
+            }
 
             // 跟新足迹内容
             this.update(footprint);
@@ -96,9 +127,9 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     }
 
     /**
+     * @param user_id
      * @Method checkTime
      * TODO: 根据现在的用户, 检查现在状态为在坐的的数据
-     * @param user_id
      * @Return int
      * @Exception
      * @Date 2020/3/24 7:49 PM
@@ -146,5 +177,37 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
                 return time;
             }
         }
+    }
+
+    /**
+     * @Method checkSeatStatus
+     * TODO: 根据自习室编号, 座位编号, 寻找当前的座位信息
+     * @param room_number
+     * @param seats_number
+     * @Return com.study.room.model.Footprint
+     * @Exception
+     * @Date 2020/4/5 8:36 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
+    @Override
+    public Footprint checkSeatStatus(String room_number, String seats_number) {
+        // TODO: 根据返回的前五列表, 抽取第一座位现阶段的状态返回
+
+        // 获得前五列表
+        List<Footprint> footprints = footprintMapper.checkSeatStatus(room_number, seats_number);
+
+        // 如果该座位信息存在历史记录的
+        if (footprints != null) {
+
+            // 取第一条并返回
+            Footprint footprint = footprints.get(0);
+
+            return footprint;
+        } else {
+            // 如果不存在记录, 返回空值
+            return null;
+        }
+
     }
 }

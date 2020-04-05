@@ -27,4 +27,15 @@
     WHERE user_id = #{user_id}
     AND status = #{status}
   </select>
+
+  <select id="checkSeatStatus" resultType="com.study.room.model.Footprint">
+    SELECT
+    *
+    FROM
+    <include refid="fp" />
+    WHERE room_number = #{room_number}
+    AND seats_number = #{seats_number}
+    ORDER BY updated_time DESC
+    LIMIT 5
+  </select>
 </mapper>
