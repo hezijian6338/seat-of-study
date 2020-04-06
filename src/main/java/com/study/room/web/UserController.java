@@ -39,6 +39,10 @@ public class UserController {
     @UserLoginToken
     @PostMapping
     public Result add(@RequestBody User user) {
+        // 实体类里没有添加控制
+        if (user.getBadRecord() == null) {
+            user.setBadRecord(0);
+        }
         userService.save(user);
         return ResultGenerator.genSuccessResult();
     }
