@@ -4,6 +4,14 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 public class User {
+
+    /**
+     * 进入黑名单次数
+     */
+    public interface BAD {
+        int BADCOUNT = 3;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;

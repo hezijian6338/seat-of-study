@@ -29,6 +29,14 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
     @Autowired
     private FootprintService footprintService;
 
+    public interface SEAT {
+        int AVAILABLE = 0;
+        int FULL = 1;
+        int FULL_TEMP = -1;
+        int ERROR = -2;
+
+    }
+
     /**
      * @param room_num
      * @param row
