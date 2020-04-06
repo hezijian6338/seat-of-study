@@ -71,6 +71,8 @@ public class SeatController {
             // 行, 列
             row = Integer.parseInt(seats[0]);
             col = Integer.parseInt(seats[1]);
+        } else {
+            return ResultGenerator.genFailResult("自习室座位编号为空~");
         }
 
         // 检查该座位是否能够坐下
