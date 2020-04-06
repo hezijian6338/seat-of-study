@@ -12,6 +12,42 @@ public class User {
         int BADCOUNT = 3;
     }
 
+    /**
+     * 用户角色区分
+     */
+    public interface ROLE {
+        /**
+         * 普通用户
+         */
+        int USER = 0;
+        /**
+         * 管理员
+         */
+        int ADMIN = 1;
+        /**
+         * 超级管理员
+         */
+        int SUPER = 2;
+    }
+
+    /**
+     * 用户状态
+     */
+    public interface STATUS {
+        /**
+         * 停用状态
+         */
+        int STOP = 0;
+        /**
+         * 正常使用状态
+         */
+        int NORMAL = 1;
+        /**
+         * 黑名单状态
+         */
+        int BAD = -1;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
