@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
 
 
 /**
@@ -101,6 +102,16 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         return false;
     }
 
+    /**
+     * @Method pauseSeat
+     * TODO: 根据完整的足迹实体来进行暂时离开座位的操作 (但其实可以直接根据 user_id来进行操作)
+     * @param footprintDTO
+     * @Return boolean
+     * @Exception
+     * @Date 2020/4/6 8:48 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
     @Override
     public boolean pauseSeat(FootprintDTO footprintDTO) {
         // 先判断状态是否为正常坐下
@@ -124,6 +135,14 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             // 状态不正确, 返回错误
             return false;
         }
+    }
+
+    @Override
+    public  boolean pauseSeat(String userId) {
+        tk.mybatis.mapper.entity.Condition condition = new tk.mybatis.mapper.entity.Condition(Footprint.class);
+//        condition
+//        this.findByCondition()
+        return false;
     }
 
     /**

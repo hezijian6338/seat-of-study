@@ -109,6 +109,13 @@ public class SeatController {
     }
 
     @UserLoginToken
+    @PostMapping("/temp/leave")
+    public Result tempLeaveSeat() {
+        // TODO: 根据用户 id
+        return null;
+    }
+
+    @UserLoginToken
     @PostMapping
     public Result add(@RequestBody Seat seat) {
         seatService.save(seat);

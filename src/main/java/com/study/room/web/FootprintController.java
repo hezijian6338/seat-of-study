@@ -6,6 +6,7 @@ import com.study.room.core.Result;
 import com.study.room.core.ResultGenerator;
 import com.study.room.dto.FootprintDTO;
 import com.study.room.model.Footprint;
+import com.study.room.model.User;
 import com.study.room.service.FootprintService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -26,8 +27,11 @@ public class FootprintController {
     @UserLoginToken
     @GetMapping("/check/time")
     public Result checkTime() {
-        WebMvcConfigurer.getLoginUser();
-        return null;
+        User user = WebMvcConfigurer.getLoginUser();
+
+        int time = footprintService.checkTime(user.getId());
+
+        return ResultGenerator.genSuccessResult(time);
     }
 
     @UserLoginToken
