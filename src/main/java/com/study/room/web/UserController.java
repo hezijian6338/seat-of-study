@@ -10,6 +10,8 @@ import com.study.room.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.study.room.utils.Tools;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,12 +21,14 @@ import java.util.List;
 /**
 * Created by CodeGenerator on 2020/03/21.
 */
+@Api(value = "userController", tags = "用户操作接口")
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Resource
     private UserService userService;
 
+    @ApiOperation(value = "login", notes = "用户登录接口")
     @PassToken
     @PostMapping("/login")
     public Result login(@RequestParam String username, @RequestParam String password) {

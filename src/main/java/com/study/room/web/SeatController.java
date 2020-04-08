@@ -15,6 +15,10 @@ import com.github.pagehelper.PageInfo;
 import com.study.room.service.UserService;
 import com.study.room.service.impl.SeatServiceImpl;
 import com.study.room.utils.Tools;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -25,6 +29,7 @@ import java.util.List;
 /**
 * Created by CodeGenerator on 2020/03/21.
 */
+@Api(value = "seat", tags = "座位管理接口")
 @RestController
 @RequestMapping("/seat")
 public class SeatController {
@@ -37,8 +42,15 @@ public class SeatController {
     @Resource
     private UserService userService;
 
+    // 记录被抢座的信息
     private static HashMap<String, Timestamp> grabSeatMap = new HashMap<>();
 
+    @ApiOperation(value = "checkSeat", notes = "检查座位信息 (是否可坐下)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "room_num", name = "自习室编号", dataType = "String", paramType = "path"),
+            @ApiImplicitParam(value = "row", name = "座位行", dataType = "int", paramType = "path"),
+            @ApiImplicitParam(value = "col", name = "座位列", dataType = "int", paramType = "path")
+    })
     @UserLoginToken
     @PostMapping("/check/room/{room_num}/row/{row}/col/{col}")
     public Result checkSeat(@PathVariable String room_num, @PathVariable int row, @PathVariable int col) {
@@ -67,6 +79,12 @@ public class SeatController {
         return ResultGenerator.genFailResult("座位信息有误");
     }
 
+    @ApiOperation(value = "seatAnyway", notes = "抢座位")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "room_num", name = "自习室编号", dataType = "String", paramType = "path"),
+            @ApiImplicitParam(value = "row", name = "座位行", dataType = "int", paramType = "path"),
+            @ApiImplicitParam(value = "col", name = "座位列", dataType = "int", paramType = "path")
+    })
     @UserLoginToken
     @PostMapping("/anyway/{room_num}/row/{row}/col/{col}")
     public Result seatAnyway(@PathVariable String room_num, @PathVariable int row, @PathVariable int col) {
@@ -120,6 +138,8 @@ public class SeatController {
         return null;
     }
 
+    @ApiOperation(value = "haveSeat", notes = "正常坐下")
+    @ApiImplicitParam(value = "footprintDTO", name = "足迹对象", dataType = "FootprintDTO", paramType = "body")
     @UserLoginToken
     @PostMapping("/down")
     public Result haveSeat(@RequestBody FootprintDTO footprintDTO) {
@@ -167,6 +187,7 @@ public class SeatController {
         }
     }
 
+    @ApiOperation(value = "tempLeaveSeat", notes = "暂时离开座位")
     @UserLoginToken
     @PostMapping("/temp/leave")
     public Result tempLeaveSeat() {
@@ -181,6 +202,13 @@ public class SeatController {
         } else {
             return ResultGenerator.genFailResult("暂停座位失败~");
         }
+    }
+
+    @UserLoginToken
+    @PostMapping("/leave")
+    public Result leaveSeat() {
+        // TODO: 离开座位
+        return null;
     }
 
     @UserLoginToken
