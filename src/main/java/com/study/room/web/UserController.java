@@ -1,5 +1,6 @@
 package com.study.room.web;
 
+import com.study.room.configurer.PassToken;
 import com.study.room.configurer.UserLoginToken;
 import com.study.room.core.Result;
 import com.study.room.core.ResultGenerator;
@@ -24,7 +25,8 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @PostMapping
+    @PassToken
+    @PostMapping("/login")
     public Result login(@RequestParam String username, @RequestParam String password) {
         User user = userService.login(username, password);
 

@@ -9,6 +9,7 @@ import com.study.room.utils.Tools;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
@@ -137,12 +138,40 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         }
     }
 
+    /**
+     * @Method pauseSeat
+     * TODO: (新) 暂停座位方法
+     * @param userId
+     * @Return boolean
+     * @Exception
+     * @Date 2020/4/8 7:52 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
     @Override
-    public  boolean pauseSeat(String userId) {
+    public boolean pauseSeat(String userId) {
+        // TODO: 构建 orm查询条件
         tk.mybatis.mapper.entity.Condition condition = new tk.mybatis.mapper.entity.Condition(Footprint.class);
-//        condition
-//        this.findByCondition()
-        return false;
+        condition.createCriteria().andEqualTo("user_id", userId).andEqualTo("status", Footprint.STATUS.IN);
+
+        List<Footprint> list = this.findByCondition(condition);
+
+        if (list.size() == 0) {
+            return false;
+        }
+
+        Footprint footprint = list.get(0);
+
+        // 更新当前时间为暂停时间
+        footprint.setUpdatedTime(Tools.getTimeStamp());
+
+        // 状态修改为暂时离开
+        footprint.setStatus(Footprint.STATUS.TEMP);
+
+        // 跟新足迹内容
+        this.update(footprint);
+
+        return true;
     }
 
     /**

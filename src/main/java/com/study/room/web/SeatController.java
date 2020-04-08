@@ -111,8 +111,17 @@ public class SeatController {
     @UserLoginToken
     @PostMapping("/temp/leave")
     public Result tempLeaveSeat() {
+        // 因为需要登录 token, 所以不存在找不到用户的情况
+        User user = WebMvcConfigurer.getLoginUser();
+
         // TODO: 根据用户 id
-        return null;
+        Boolean result = footprintService.pauseSeat(user.getId());
+
+        if (result) {
+            return ResultGenerator.genSuccessResult();
+        } else {
+            return ResultGenerator.genFailResult("暂停座位失败~");
+        }
     }
 
     @UserLoginToken
