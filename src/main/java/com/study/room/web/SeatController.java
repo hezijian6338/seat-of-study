@@ -5,6 +5,7 @@ import com.study.room.configurer.WebMvcConfigurer;
 import com.study.room.core.Result;
 import com.study.room.core.ResultGenerator;
 import com.study.room.dto.FootprintDTO;
+import com.study.room.model.Footprint;
 import com.study.room.model.Seat;
 import com.study.room.model.User;
 import com.study.room.service.FootprintService;
@@ -13,9 +14,12 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.study.room.service.UserService;
 import com.study.room.service.impl.SeatServiceImpl;
+import com.study.room.utils.Tools;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -32,6 +36,8 @@ public class SeatController {
 
     @Resource
     private UserService userService;
+
+    private static HashMap<String, Timestamp> grabSeatMap = new HashMap<>();
 
     @UserLoginToken
     @PostMapping("/check/room/{room_num}/row/{row}/col/{col}")
@@ -59,6 +65,59 @@ public class SeatController {
         if (status == SeatServiceImpl.SEAT.ERROR)
             return ResultGenerator.genFailResult("座位信息有误");
         return ResultGenerator.genFailResult("座位信息有误");
+    }
+
+    @UserLoginToken
+    @PostMapping("/anyway/{room_num}/row/{row}/col/{col}")
+    public Result seatAnyway(@PathVariable String room_num, @PathVariable int row, @PathVariable int col) {
+        User user = WebMvcConfigurer.getLoginUser();
+
+        String seats_number = row + "," + col;
+        Footprint footprint = footprintService.checkSeatStatus(room_num, seats_number);
+
+        // TODO: 检查是否已经在抢座了
+        if (grabSeatMap.containsKey(footprint.getId())) {
+            // 当前时间减去记录的时间, 看看大不大与 20min
+            long time = Tools.getLongTimeStamp() - grabSeatMap.get(footprint.getId()).getTime();
+
+            if (time <= 0) {
+                return ResultGenerator.genFailResult("系统错误~");
+            }
+
+            // 检查时间是否已经超过 20分钟了
+            if (time >= 20 * 60) {
+                // TODO: 这里需要手动把足迹状态更新为离开, 并且记录黑名单次数
+                footprint.setStatus(Footprint.STATUS.OUT);
+
+                // 找到被抢座的用户
+                User badUser = userService.findById(footprint.getUserId());
+
+                // 黑名单次数加一
+                badUser.setBadRecord(badUser.getBadRecord() + 1);
+
+                // 黑名单次数大于3, 黑名单状态开启
+                if (badUser.getBadRecord() >= 3) {
+                    badUser.setStatus(User.STATUS.BAD);
+
+                    // 跟新被抢座的人的数据
+                    userService.update(badUser);
+                }
+
+                return ResultGenerator.genSuccessResult("你可以进行抢座了~");
+            }
+        }
+
+        if (footprint.getStatus() == Footprint.STATUS.TEMP){
+            return ResultGenerator.genFailResult("用户已经使用暂离, 不允许抢座~");
+        }
+
+        if (footprint.getStatus() == Footprint.STATUS.IN) {
+            // 当前被抢座的用户 id, 和当前的时间戳
+            grabSeatMap.put(footprint.getId(), Tools.getTimeStamp());
+            return ResultGenerator.genSuccessResult("开始抢座~");
+        }
+
+        return null;
     }
 
     @UserLoginToken
