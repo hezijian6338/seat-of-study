@@ -38,8 +38,14 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
      */
     @Override
     public boolean haveSeat(FootprintDTO footprintDTO) {
-        // TODO: 完成基础逻辑
+        // TODO: 检查该用户之前是否有借座, 但是忘记离开座位的记录 (手动触发, 结束状态, 并且自动计算选择的自习时长)
+        if (footprintDTO.getUserId() != null)
+            // 直接调用检查时间的方法 (有类似的逻辑)
+            this.checkTime(footprintDTO.getUserId());
+        else
+            return false;
 
+        // TODO: 完成基础逻辑
         Footprint footprint = new Footprint();
 
         // 直接映射过去, 填充完整
@@ -51,7 +57,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
 
         this.update(footprint);
 
-        return false;
+        return true;
     }
 
     /**
