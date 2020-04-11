@@ -42,7 +42,7 @@ public class SeatController {
     @Resource
     private UserService userService;
 
-    // 记录被抢座的信息
+    // 记录被抢座的信息 (userId, 当前的时间戳)
     private static HashMap<String, Timestamp> grabSeatMap = new HashMap<>();
 
     @ApiOperation(value = "checkSeat", notes = "检查座位信息 (是否可坐下)")
@@ -119,6 +119,9 @@ public class SeatController {
 
                     // 跟新被抢座的人的数据
                     userService.update(badUser);
+
+                    // 设置座位离开, 空出来
+                    seatService.leaveSeat(room_num, row, col);
                 }
 
                 return ResultGenerator.genSuccessResult("你可以进行抢座了~");
@@ -207,7 +210,12 @@ public class SeatController {
     @UserLoginToken
     @PostMapping("/leave")
     public Result leaveSeat() {
+        // 因为需要登录 token, 所以不存在找不到用户的情况
+        User user = WebMvcConfigurer.getLoginUser();
+
         // TODO: 离开座位
+
+
         return null;
     }
 

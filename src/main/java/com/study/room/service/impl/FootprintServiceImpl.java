@@ -71,16 +71,18 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
      * @Version 1.0
      */
     @Override
-    public boolean leaveSeat(FootprintDTO footprintDTO) {
+    public boolean leaveSeat(String userId) {
         // 需要添加一个方法, 根据状态和当前自习室编号座位号进行查询现有的座位足迹信息 (√)
 
+        // TODO: 根据新增加的方法, 返回找到的座位足迹信息
+        Footprint footprint = this.findUseSeatByUserId(userId);
 
         // 判断状态是否从正常坐下状态
-        if (footprintDTO.getStatus() == Footprint.STATUS.IN) {
-            Footprint footprint = new Footprint();
+        if (footprint.getStatus() == Footprint.STATUS.IN) {
+//            Footprint footprint = new Footprint();
 
             // 直接映射过去, 填充完整
-            BeanUtils.copyProperties(footprintDTO, footprint);
+//            BeanUtils.copyProperties(footprintDTO, footprint);
 
             // 更新当前时间为离开时间
             footprint.setUpdatedTime(Tools.getTimeStamp());
@@ -91,7 +93,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             // TODO: 填充一共总自习时间
 
             // 存在过暂离的情况, 自习时间本不为空
-            int staty_time = footprintDTO.getStayTime();
+            int staty_time = footprint.getStayTime();
             // 如果暂离不为空, 即是曾经暂离过
             if (staty_time != 0) {
                 // 计算当次自习时间 (当前时间 - 上次更新时间 + 当前已有的时间)
@@ -170,6 +172,8 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
 
         // 更新当前时间为暂停时间
         footprint.setUpdatedTime(Tools.getTimeStamp());
+
+        // FIXME: 增加已经自习时间
 
         // 状态修改为暂时离开
         footprint.setStatus(Footprint.STATUS.TEMP);
@@ -263,5 +267,21 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             return null;
         }
 
+    }
+
+    @Override
+    public Footprint findUseSeatByUserId(String userId) {
+        tk.mybatis.mapper.entity.Condition condition = new tk.mybatis.mapper.entity.Condition(Footprint.class);
+        Example.Criteria criteria = condition.createCriteria();
+        criteria.andEqualTo("user_id", userId);
+        criteria.orEqualTo("status", Footprint.STATUS.IN);
+        criteria.orEqualTo("status", Footprint.STATUS.TEMP);
+        List<Footprint> footprints = this.findByCondition(condition);
+
+        if (footprints.size() != 0) {
+            return footprints.get(0);
+        }
+
+        return null;
     }
 }

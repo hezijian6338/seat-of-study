@@ -48,4 +48,6 @@ public interface SeatService extends Service<Seat> {
      * @Version  1.0
      */
     boolean leaveSeat(String room_num, int row, int col);
+
+    boolean leaveSeat(String userId);
 }

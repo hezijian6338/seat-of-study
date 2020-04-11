@@ -35,6 +35,13 @@ public class FootprintController {
     }
 
     @UserLoginToken
+    @GetMapping("/history")
+    public Result history() {
+        User user = WebMvcConfigurer.getLoginUser();
+        return null;
+    }
+
+    @UserLoginToken
     @PostMapping
     public Result add(@RequestBody Footprint footprint) {
         footprintService.save(footprint);

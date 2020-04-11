@@ -1,6 +1,7 @@
 package com.study.room.service.impl;
 
 import com.study.room.dao.SeatMapper;
+import com.study.room.dto.FootprintDTO;
 import com.study.room.model.Footprint;
 import com.study.room.model.Seat;
 import com.study.room.service.FootprintService;
@@ -185,5 +186,14 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean leaveSeat(String userId) {
+
+
+        footprintService.findUseSeatByUserId(userId);
+
+        return true;
     }
 }

@@ -31,7 +31,7 @@ public interface FootprintService extends Service<Footprint> {
      * @Author hezijian6338
      * @Version  1.0
      */
-    boolean leaveSeat(FootprintDTO footprint);
+    boolean leaveSeat(String userId);
 
     /**
      * @Method pauseSeat
@@ -60,4 +60,6 @@ public interface FootprintService extends Service<Footprint> {
      * @Author hezijian6338
      */
     Footprint checkSeatStatus(String room_number, String seats_number);
+
+    Footprint findUseSeatByUserId(String userId);
 }
