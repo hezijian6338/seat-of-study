@@ -10,6 +10,9 @@ import com.study.room.model.User;
 import com.study.room.service.FootprintService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -24,6 +27,7 @@ public class FootprintController {
     @Resource
     private FootprintService footprintService;
 
+    @ApiOperation(value = "checkTime", notes = "查看用户的")
     @UserLoginToken
     @GetMapping("/check/time")
     public Result checkTime() {
@@ -35,6 +39,7 @@ public class FootprintController {
         return ResultGenerator.genSuccessResult(time);
     }
 
+    @ApiOperation(value = "history", notes = "查看用户的")
     @UserLoginToken
     @GetMapping("/history")
     public Result history() {

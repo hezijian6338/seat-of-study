@@ -207,6 +207,7 @@ public class SeatController {
         }
     }
 
+    @ApiOperation(value = "leaveSeat", notes = "离开座位")
     @UserLoginToken
     @PostMapping("/leave")
     public Result leaveSeat() {
@@ -214,9 +215,14 @@ public class SeatController {
         User user = WebMvcConfigurer.getLoginUser();
 
         // TODO: 离开座位
+        Boolean result = seatService.leaveSeat(user.getId());
 
+        if (result) {
+            return ResultGenerator.genSuccessResult();
+        } else {
+            return ResultGenerator.genFailResult("离开座位失败~");
+        }
 
-        return null;
     }
 
     @UserLoginToken
