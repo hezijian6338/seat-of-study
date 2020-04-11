@@ -29,6 +29,7 @@ public class FootprintController {
     public Result checkTime() {
         User user = WebMvcConfigurer.getLoginUser();
 
+        // TODO: 返回剩余时间
         int time = footprintService.checkTime(user.getId());
 
         return ResultGenerator.genSuccessResult(time);
@@ -38,7 +39,11 @@ public class FootprintController {
     @GetMapping("/history")
     public Result history() {
         User user = WebMvcConfigurer.getLoginUser();
-        return null;
+
+        // TODO: 返回历史借座信息
+        List<Footprint> footprints = footprintService.checkHistoryByUser(user.getId());
+
+        return ResultGenerator.genSuccessResult(footprints);
     }
 
     @UserLoginToken

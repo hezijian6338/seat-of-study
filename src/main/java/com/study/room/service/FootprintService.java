@@ -3,6 +3,8 @@ import com.study.room.dto.FootprintDTO;
 import com.study.room.model.Footprint;
 import com.study.room.core.Service;
 
+import java.util.List;
+
 
 /**
  * Created by CodeGenerator on 2020/03/21.
@@ -61,5 +63,17 @@ public interface FootprintService extends Service<Footprint> {
      */
     Footprint checkSeatStatus(String room_number, String seats_number);
 
+    /**
+     * TODO: 根据用户 id找到当前使用的足迹信息
+     * @Return com.study.room.model.Footprint
+     * @Author hezijian6338
+     */
     Footprint findUseSeatByUserId(String userId);
+
+    /**
+     * TODO: 根据用户 id返回前五条历史消息
+     * @Date 2020/4/11 7:35 PM
+     * @Author hezijian6338
+     */
+    List<Footprint> checkHistoryByUser(String userId);
 }

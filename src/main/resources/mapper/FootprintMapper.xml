@@ -40,4 +40,13 @@
   </select>
 
 
+  <select id="checkHistoryByUser" resultType="com.study.room.model.Footprint">
+    SELECT
+    *
+    FROM
+    <include refid="fp" />
+    WHERE user_id = #{user_id}
+    ORDER BY updated_time DESC
+    LIMIT 5
+  </select>
 </mapper>

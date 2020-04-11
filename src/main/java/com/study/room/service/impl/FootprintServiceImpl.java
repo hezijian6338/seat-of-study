@@ -269,6 +269,16 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
 
     }
 
+    /**
+     * @Method findUseSeatByUserId
+     * TODO: 根据用户 id信息, 返回正在用的座位信息
+     * @param userId
+     * @Return com.study.room.model.Footprint
+     * @Exception
+     * @Date 2020/4/11 7:37 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
     @Override
     public Footprint findUseSeatByUserId(String userId) {
         tk.mybatis.mapper.entity.Condition condition = new tk.mybatis.mapper.entity.Condition(Footprint.class);
@@ -283,5 +293,21 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         }
 
         return null;
+    }
+
+    /**
+     * @Method checkHistoryByUser
+     * TODO: 根据用户 id信息, 返回前五条历史记录
+     * @param userId
+     * @Return java.util.List<com.study.room.model.Footprint>
+     * @Exception
+     * @Date 2020/4/11 7:37 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
+    @Override
+    public List<Footprint> checkHistoryByUser(String userId) {
+        List<Footprint> footprints = footprintMapper.checkHistoryByUser(userId);
+        return footprints;
     }
 }
