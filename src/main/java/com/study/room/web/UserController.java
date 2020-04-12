@@ -4,11 +4,13 @@ import com.study.room.configurer.PassToken;
 import com.study.room.configurer.UserLoginToken;
 import com.study.room.core.Result;
 import com.study.room.core.ResultGenerator;
+import com.study.room.dto.CreateUserDTO;
 import com.study.room.dto.UserDTO;
 import com.study.room.model.User;
 import com.study.room.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.study.room.utils.MD5Utils;
 import com.study.room.utils.Tools;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,9 +44,19 @@ public class UserController {
         }
     }
 
-    @UserLoginToken
+//    @UserLoginToken
     @PostMapping
-    public Result add(@RequestBody User user) {
+    public Result add(@RequestBody CreateUserDTO userDTO) {
+        User user = new User();
+
+        BeanUtils.copyProperties(userDTO, user);
+
+        user.setId(Tools.getUUID());
+
+        user.setPassword(MD5Utils.StringToMD5_hex("admin"));
+
+        user.setCreatedTime(Tools.getTimeStamp());
+
         // 实体类里没有添加控制
         if (user.getBadRecord() == null) {
             user.setBadRecord(0);

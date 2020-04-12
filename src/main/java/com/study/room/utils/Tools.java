@@ -6,6 +6,7 @@ import com.study.room.model.User;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by Macbook on 2020/3/21.
@@ -50,4 +51,8 @@ public class Tools {
         return token;
     }
 
+    public static String getUUID() {
+        String uuid = UUID.randomUUID().toString();
+        return uuid.replace("-", "");
+    }
 }

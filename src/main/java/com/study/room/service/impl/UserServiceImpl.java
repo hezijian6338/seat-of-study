@@ -4,6 +4,7 @@ import com.study.room.core.AbstractService;
 import com.study.room.dao.UserMapper;
 import com.study.room.model.User;
 import com.study.room.service.UserService;
+import com.study.room.utils.MD5Utils;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +27,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     public User login(String username, String password) {
         if (username == null && password == null)
             return null;
-        User user = this.findBy("name", username);
-        if (password.equals(user.getPassword())) {
+        User user = this.findBy("studentNum", username);
+
+        String md5Password = MD5Utils.StringToMD5_hex(password);
+
+        if (md5Password.equals(user.getPassword())) {
             logger.info("{} 用户登录成功~", user.getName());
             return user;
         } else {
