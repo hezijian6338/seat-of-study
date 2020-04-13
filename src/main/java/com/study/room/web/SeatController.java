@@ -47,9 +47,9 @@ public class SeatController {
 
     @ApiOperation(value = "checkSeat", notes = "检查座位信息 (是否可坐下)")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "room_num", name = "自习室编号", dataType = "String", paramType = "path"),
-            @ApiImplicitParam(value = "row", name = "座位行", dataType = "int", paramType = "path"),
-            @ApiImplicitParam(value = "col", name = "座位列", dataType = "int", paramType = "path")
+            @ApiImplicitParam(value = "自习室编号", name = "room_num", dataType = "String", paramType = "path"),
+            @ApiImplicitParam(value = "座位行", name = "row", dataType = "int", paramType = "path"),
+            @ApiImplicitParam(value = "座位列", name = "col", dataType = "int", paramType = "path")
     })
     @UserLoginToken
     @PostMapping("/check/room/{room_num}/row/{row}/col/{col}")
@@ -81,9 +81,9 @@ public class SeatController {
 
     @ApiOperation(value = "seatAnyway", notes = "抢座位")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "room_num", name = "自习室编号", dataType = "String", paramType = "path"),
-            @ApiImplicitParam(value = "row", name = "座位行", dataType = "int", paramType = "path"),
-            @ApiImplicitParam(value = "col", name = "座位列", dataType = "int", paramType = "path")
+            @ApiImplicitParam(value = "自习室编号", name = "room_num", dataType = "String", paramType = "path"),
+            @ApiImplicitParam(value = "座位行", name = "row", dataType = "int", paramType = "path"),
+            @ApiImplicitParam(value = "座位列", name = "col", dataType = "int", paramType = "path")
     })
     @UserLoginToken
     @PostMapping("/anyway/{room_num}/row/{row}/col/{col}")
@@ -142,7 +142,7 @@ public class SeatController {
     }
 
     @ApiOperation(value = "haveSeat", notes = "正常坐下")
-    @ApiImplicitParam(value = "footprintDTO", name = "足迹对象", dataType = "FootprintDTO", paramType = "body")
+    @ApiImplicitParam(value = "足迹对象", name = "footprintDTO", dataType = "FootprintDTO", paramType = "body")
     @UserLoginToken
     @PostMapping("/down")
     public Result haveSeat(@RequestBody FootprintDTO footprintDTO) {
@@ -225,18 +225,20 @@ public class SeatController {
 
     }
 
-
     @ApiOperation(value = "createRoom", notes = "创建自习室")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "room_num", name = "自习室编号", dataType = "String", paramType = "path"),
-            @ApiImplicitParam(value = "row", name = "座位行", dataType = "int", paramType = "path"),
-            @ApiImplicitParam(value = "col", name = "座位列", dataType = "int", paramType = "path")
+            @ApiImplicitParam(value = "自习室编号", name = "room_num", dataType = "String", paramType = "path"),
+            @ApiImplicitParam(value = "座位行", name = "row", dataType = "int", paramType = "path"),
+            @ApiImplicitParam(value = "座位列", name = "col", dataType = "int", paramType = "path")
     })
     @UserLoginToken
     @PostMapping("/room/{room_num}/row/{row}/col/{col}")
     public Result createRoom(@PathVariable String room_num, @PathVariable int row, @PathVariable int col) {
-
-        return null;
+        String roomId = seatService.createRoom(room_num, row, col);
+        if (roomId == null)
+            return ResultGenerator.genFailResult("创建失败~");
+        else
+            return ResultGenerator.genSuccessResult(roomId);
     }
 
     @UserLoginToken

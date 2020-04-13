@@ -9,12 +9,12 @@ public class Seat {
         /**
          * 座位为空
          */
-        char EMPTY = 0;
+        char EMPTY = '0';
 
         /**
          * 座位被坐下
          */
-        char FULL = 1;
+        char FULL = '1';
     }
 
     public interface STATUS {

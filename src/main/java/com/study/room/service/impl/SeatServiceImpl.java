@@ -233,16 +233,19 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         ArrayList<String> rowSeat = new ArrayList<>();
 
         // 构建列数的数组
-        char[] colSeat = new char[col -1];
+        char[] colSeat = new char[col];
+
+        StringBuilder colSeatString = new StringBuilder();
 
         // 填写列
         for (int i = 0; i < col; i++) {
-            colSeat[i] = Seat.SEAT.EMPTY;
+//            colSeat[i] = Seat.SEAT.EMPTY;
+            colSeatString.append(Seat.SEAT.EMPTY);
         }
 
         // 填写行
         for (int j = 0; j < row; j++) {
-            rowSeat.add(j, colSeat.toString());
+            rowSeat.add(j, colSeatString.toString());
         }
 
         seat.setId(Tools.getUUID());
@@ -254,6 +257,8 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         seat.setSeatsCount(row*col);
         seat.setSeatsAvailable(row*col);
         seat.setSeatsUnavailabe(0);
+
+        seat.setCreatedTime(Tools.getTimeStamp());
 
         this.save(seat);
 
