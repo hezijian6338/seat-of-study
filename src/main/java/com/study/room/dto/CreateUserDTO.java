@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Created by Macbook on 2020/4/11.
  */
-@ApiModel(value = "用户信息传输对象")
+@ApiModel(value = "CreateUserDTO", description = "用户信息传输对象")
 public class CreateUserDTO {
     /**
      * 用户名称

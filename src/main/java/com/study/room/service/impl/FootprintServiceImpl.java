@@ -61,7 +61,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     }
 
     /**
-     * @param footprintDTO
+     * @param userId
      * @Method leaveSeat
      * TODO: 离开正在使用的座位
      * @Return boolean
@@ -198,6 +198,11 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     public int checkTime(String user_id) {
         // 检查当前用户在坐的数据
         List<Footprint> footprintList = footprintMapper.checkTime(user_id, Footprint.STATUS.IN);
+
+        // 用户第一次借座, 数组就为 0
+        if (footprintList.size() == 0)
+            return 0;
+
         Footprint footprint = footprintList.get(0);
 
         if (footprint == null)
@@ -283,7 +288,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     public Footprint findUseSeatByUserId(String userId) {
         tk.mybatis.mapper.entity.Condition condition = new tk.mybatis.mapper.entity.Condition(Footprint.class);
         Example.Criteria criteria = condition.createCriteria();
-        criteria.andEqualTo("user_id", userId);
+        criteria.andEqualTo("userId", userId);
         criteria.orEqualTo("status", Footprint.STATUS.IN);
         criteria.orEqualTo("status", Footprint.STATUS.TEMP);
         List<Footprint> footprints = this.findByCondition(condition);

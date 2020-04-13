@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -56,8 +58,8 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         // 传递的座位位置信息有误
         if (row == 0 || col == 0)
             return -2;
-        Seat seats = this.findBy("room_number", room_num);
-        String[] seat_list = seats.getSeats().split(",");
+        Seat seats = this.findBy("roomNumber", room_num);
+        String[] seat_list = seats.getSeats().replace("[", "").replace("]", "").split(",");
 
         // 判断获取座位的行数是否大于数组的大小
         if (row <= seat_list.length) {
@@ -68,7 +70,7 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
             if (col <= seat_col.length) {
                 char status = seat_col[col - 1];
                 // 该座位有人, 但是不知道是暂离还是正在坐下但是人离开了
-                if (status == 1) {
+                if (status == '1') {
                     // 组合座位的格式
                     String seats_number = row + "," + col;
                     // 检查返回的数据
@@ -82,7 +84,7 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                         return 1;
                     }
                 }
-                if (status == 0) {
+                if (status == '0') {
                     return 0;
                 }
             }
@@ -108,8 +110,8 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         if (row == 0 || col == 0)
             return false;
 
-        Seat seats = this.findBy("room_number", room_num);
-        String[] seat_list = seats.getSeats().split(",");
+        Seat seats = this.findBy("roomNumber", room_num);
+        String[] seat_list = seats.getSeats().replace(" ", "").replace("[", "").replace("]", "").split(",");
 
         // 判断获取座位的行数是否大于数组的大小
         if (row <= seat_list.length) {
@@ -124,11 +126,15 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                 }
                 if (status == Seat.SEAT.EMPTY) {
                     // 返回可以坐下, 并且设置为坐下
-                    seat_col[col - 1] = 1;
+                    seat_col[col - 1] = Seat.SEAT.FULL;
 
                     System.out.println("检查列表是否为引用类型相关的修改: " + seat_list);
-                    seat_list[row - 1] = seat_col.toString();
-                    seats.setSeats(seat_list.toString());
+                    logger.info("{}", String.valueOf(seat_col));
+                    seat_list[row - 1] = String.valueOf(seat_col);
+
+                    List<String> seat = Arrays.asList(seat_list);
+
+                    seats.setSeats(seat.toString());
 
                     // TODO: 维护数据表可用座位和不可用座位的数量
                     seats.setSeatsAvailable(seats.getSeatsAvailable() - 1);
@@ -233,7 +239,7 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         ArrayList<String> rowSeat = new ArrayList<>();
 
         // 构建列数的数组
-        char[] colSeat = new char[col];
+//        char[] colSeat = new char[col];
 
         StringBuilder colSeatString = new StringBuilder();
 

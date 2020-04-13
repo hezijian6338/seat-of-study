@@ -160,8 +160,8 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 //                        return false;
 //                    }
                     Result result = new Result();
-                    logger.warn("签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}",
-                            request.getRequestURI(), getIpAddress(request), JSON.toJSONString(request.getParameterMap()));
+//                    logger.warn("签名认证失败，请求接口：{}，请求IP：{}，请求参数：{}",
+//                            request.getRequestURI(), getIpAddress(request), JSON.toJSONString(request.getParameterMap()));
                     String token = request.getHeader("token");// 从 http 请求头中取出 token
                     // 如果不是映射到方法直接通过
                     if (!(handler instanceof HandlerMethod)) {

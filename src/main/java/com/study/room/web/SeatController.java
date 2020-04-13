@@ -175,7 +175,7 @@ public class SeatController {
 
         // 如果可以, 则留下足迹
         if (isAvailable) {
-            if (footprintDTO.getUserId().isEmpty())
+            if (footprintDTO.getUserId() == null)
                 footprintDTO.setUserId(WebMvcConfigurer.getLoginUser().getId());
             isSeat = footprintService.haveSeat(footprintDTO);
         } else {

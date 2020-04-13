@@ -26,7 +26,7 @@ public interface FootprintService extends Service<Footprint> {
     /**
      * @Method leaveSeat
      * TODO: 离开座位记录
-     * @param footprint
+     * @param boolean
      * @Return boolean
      * @Exception
      * @Date 2020/3/21 11:52 AM

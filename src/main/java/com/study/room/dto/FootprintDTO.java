@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Created by Macbook on 2020/3/21.
  */
-@ApiModel(value = "足迹/日志 实体类")
+@ApiModel(value = "FootprintDTO", description = "足迹/日志 实体类")
 public class FootprintDTO {
 
     @ApiModelProperty(value = "用户 id")
