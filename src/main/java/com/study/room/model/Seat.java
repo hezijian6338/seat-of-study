@@ -17,6 +17,21 @@ public class Seat {
         char FULL = 1;
     }
 
+    public interface STATUS {
+        /**
+         * 待用
+         */
+        Integer WAIT = 0;
+        /**
+         * 启用
+         */
+        Integer USE = 1;
+        /**
+         * 维护
+         */
+        Integer STOP = -1;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;

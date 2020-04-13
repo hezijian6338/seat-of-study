@@ -7,12 +7,14 @@ import com.study.room.model.Seat;
 import com.study.room.service.FootprintService;
 import com.study.room.service.SeatService;
 import com.study.room.core.AbstractService;
+import com.study.room.utils.Tools;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -195,5 +197,58 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         footprintService.findUseSeatByUserId(userId);
 
         return true;
+    }
+
+    /**
+     * @Method createRoom
+     * TODO: 创建自习室, 并返回 id
+     * @param room_num
+     * @param row
+     * @param col
+     * @Return java.lang.String
+     * @Exception
+     * @Date 2020/4/12 8:44 PM
+     * @Author hezijian6338
+     * @Version 1.0
+     */
+    @Override
+    public String createRoom(String room_num, int row, int col) {
+        if (row == 0 && col == 0)
+            return null;
+        if (room_num == null)
+            return null;
+
+        // 构建空对象
+        Seat seat = new Seat();
+
+        // 构建行数组
+        ArrayList<String> rowSeat = new ArrayList<>();
+
+        // 构建列数的数组
+        char[] colSeat = new char[col -1];
+
+        // 填写列
+        for (int i = 0; i < col; i++) {
+            colSeat[i] = Seat.SEAT.EMPTY;
+        }
+
+        // 填写行
+        for (int j = 0; j < row; j++) {
+            rowSeat.add(j, colSeat.toString());
+        }
+
+        seat.setId(Tools.getUUID());
+        seat.setSeats(rowSeat.toString());
+        seat.setRoomNumber(room_num);
+        seat.setName(room_num);
+        seat.setStatus(Seat.STATUS.USE);
+
+        seat.setSeatsCount(row*col);
+        seat.setSeatsAvailable(row*col);
+        seat.setSeatsUnavailabe(0);
+
+        this.save(seat);
+
+        return seat.getId();
     }
 }

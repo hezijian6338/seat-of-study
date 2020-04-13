@@ -225,6 +225,20 @@ public class SeatController {
 
     }
 
+
+    @ApiOperation(value = "createRoom", notes = "创建自习室")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "room_num", name = "自习室编号", dataType = "String", paramType = "path"),
+            @ApiImplicitParam(value = "row", name = "座位行", dataType = "int", paramType = "path"),
+            @ApiImplicitParam(value = "col", name = "座位列", dataType = "int", paramType = "path")
+    })
+    @UserLoginToken
+    @PostMapping("/room/{room_num}/row/{row}/col/{col}")
+    public Result createRoom(@PathVariable String room_num, @PathVariable int row, @PathVariable int col) {
+
+        return null;
+    }
+
     @UserLoginToken
     @PostMapping
     public Result add(@RequestBody Seat seat) {

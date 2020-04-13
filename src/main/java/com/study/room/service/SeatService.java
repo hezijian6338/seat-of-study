@@ -49,5 +49,12 @@ public interface SeatService extends Service<Seat> {
      */
     boolean leaveSeat(String room_num, int row, int col);
 
+    /**
+     * TODO: 离开座位
+     * @Return boolean
+     * @Author hezijian6338
+     */
     boolean leaveSeat(String userId);
+
+    String createRoom(String room_num, int row, int col);
 }
