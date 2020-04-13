@@ -19,9 +19,9 @@
 
   <sql id="fp">footprint</sql>
 
-  <select id="checkTime" resultType="com.study.room.model.Footprint">
+  <select id="checkTime" resultMap="BaseResultMap">
     SELECT
-    id, user_id, room_number, seats_number, wanted_time, status, moment_tag, created_time, updated_time
+    *
     FROM
     <include refid="fp"/>
     WHERE user_id = #{user_id}

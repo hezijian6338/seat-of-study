@@ -179,7 +179,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     public boolean pauseSeat(String userId) {
         // TODO: 构建 orm查询条件
         tk.mybatis.mapper.entity.Condition condition = new tk.mybatis.mapper.entity.Condition(Footprint.class);
-        condition.createCriteria().andEqualTo("user_id", userId).andEqualTo("status", Footprint.STATUS.IN);
+        condition.createCriteria().andEqualTo("userId", userId).andEqualTo("status", Footprint.STATUS.IN);
 
         List<Footprint> list = this.findByCondition(condition);
 
@@ -193,6 +193,9 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         footprint.setUpdatedTime(Tools.getTimeStamp());
 
         // FIXME: 增加已经自习时间
+        int time = this.checkTime(userId);
+
+        footprint.setStayTime(time);
 
         // 状态修改为暂时离开
         footprint.setStatus(Footprint.STATUS.TEMP);
@@ -234,11 +237,13 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             // 如果没有记录已经坐下的时间, 证明他没有离开过, 直接算就可以了
             if (footprint.getStayTime() == 0) {
 
-                time = (current_time.getNanos() - footprint.getUpdatedTime().getNanos()) > footprint.getWantedTime() ? (current_time.getNanos() - footprint.getUpdatedTime().getNanos()) : 0;
+                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime()) > footprint.getWantedTime() ? (current_time.getTime() - footprint.getUpdatedTime().getTime()) : 0);
 
                 // 时间已经用完, 修改状态为离开座位
                 if (time == 0) {
                     footprint.setUpdatedTime(current_time);
+                    // FIXME: 究竟要不要更新自习时间?
+//                    footprint.setStayTime(time);
                     footprint.setStatus(Footprint.STATUS.OUT);
                     this.update(footprint);
                 }
@@ -247,11 +252,13 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             } else {
                 // 已经有坐下时间, 证明状态已经修改过
 
-                time = (current_time.getNanos() - footprint.getUpdatedTime().getNanos() + footprint.getStayTime()) > footprint.getStayTime() ? (current_time.getNanos() - footprint.getUpdatedTime().getNanos()) : 0;
+                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime()) > footprint.getStayTime() ? (current_time.getTime() - footprint.getUpdatedTime().getTime()) : 0);
 
                 // 时间已经用完, 修改状态为离开座位
                 if (time == 0) {
                     footprint.setUpdatedTime(current_time);
+                    // FIXME: 究竟要不要更新自习时间?
+//                    footprint.setStayTime(time);
                     footprint.setStatus(Footprint.STATUS.OUT);
                     this.update(footprint);
                 }
