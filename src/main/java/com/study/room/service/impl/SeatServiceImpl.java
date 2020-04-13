@@ -130,6 +130,10 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                     seat_list[row - 1] = seat_col.toString();
                     seats.setSeats(seat_list.toString());
 
+                    // TODO: 维护数据表可用座位和不可用座位的数量
+                    seats.setSeatsAvailable(seats.getSeatsAvailable() - 1);
+                    seats.setSeatsUnavailabe(seats.getSeatsUnavailabe() + 1);
+
                     this.update(seats);
 
                     return true;
@@ -180,6 +184,10 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                     System.out.println("检查列表是否为引用类型相关的修改: " + seat_list);
                     seat_list[row - 1] = seat_col.toString();
                     seats.setSeats(seat_list.toString());
+
+                    // TODO: 维护数据表可用座位和不可用座位的数量
+                    seats.setSeatsAvailable(seats.getSeatsAvailable() + 1);
+                    seats.setSeatsUnavailabe(seats.getSeatsUnavailabe() - 1);
 
                     this.update(seats);
 
