@@ -150,11 +150,11 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
     }
 
     /**
-     * @Method leaveSeat
-     * TODO: 进行正常的座位离开操作
      * @param room_num
      * @param row
      * @param col
+     * @Method leaveSeat
+     * TODO: 进行正常的座位离开操作
      * @Return boolean
      * @Exception
      * @Date 2020/4/5 9:36 PM
@@ -167,8 +167,8 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         if (row == 0 || col == 0)
             return false;
 
-        Seat seats = this.findBy("room_number", room_num);
-        String[] seat_list = seats.getSeats().split(",");
+        Seat seats = this.findBy("roomNumber", room_num);
+        String[] seat_list = seats.getSeats().replace(" ", "").replace("[", "").replace("]", "").split(",");
 
         // 判断获取座位的行数是否大于数组的大小
         if (row <= seat_list.length) {
@@ -188,8 +188,11 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                     seat_col[col - 1] = Seat.SEAT.EMPTY;
 
                     System.out.println("检查列表是否为引用类型相关的修改: " + seat_list);
-                    seat_list[row - 1] = seat_col.toString();
-                    seats.setSeats(seat_list.toString());
+                    seat_list[row - 1] = String.valueOf(seat_col);
+
+                    List<String> seat = Arrays.asList(seat_list);
+
+                    seats.setSeats(seat.toString());
 
                     // TODO: 维护数据表可用座位和不可用座位的数量
                     seats.setSeatsAvailable(seats.getSeatsAvailable() + 1);
@@ -206,19 +209,43 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
 
     @Override
     public boolean leaveSeat(String userId) {
+        // TODO: 根据当前用户 id进行查找足迹
+        Footprint footprint = footprintService.findUseSeatByUserId(userId);
 
+        if (footprint == null)
+            return false;
 
-        footprintService.findUseSeatByUserId(userId);
+        // 解析座位行列信息
+        String[] seats = footprint.getSeatsNumber().split(",");
 
-        return true;
+        int row = Integer.parseInt(seats[0]);
+
+        int col = Integer.parseInt(seats[1]);
+
+        boolean seatResult = this.leaveSeat(footprint.getRoomNumber(), row, col);
+
+        boolean fpResult = false;
+
+        // TODO: 座位足迹离开
+        if (seatResult) {
+            fpResult = footprintService.leaveSeat(userId);
+        } else {
+            // FIXME: 缺失回滚
+            return false;
+        }
+
+        if (fpResult && seatResult)
+            return true;
+        else
+            return false;
     }
 
     /**
-     * @Method createRoom
-     * TODO: 创建自习室, 并返回 id
      * @param room_num
      * @param row
      * @param col
+     * @Method createRoom
+     * TODO: 创建自习室, 并返回 id
      * @Return java.lang.String
      * @Exception
      * @Date 2020/4/12 8:44 PM
@@ -260,8 +287,8 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         seat.setName(room_num);
         seat.setStatus(Seat.STATUS.USE);
 
-        seat.setSeatsCount(row*col);
-        seat.setSeatsAvailable(row*col);
+        seat.setSeatsCount(row * col);
+        seat.setSeatsAvailable(row * col);
         seat.setSeatsUnavailabe(0);
 
         seat.setCreatedTime(Tools.getTimeStamp());

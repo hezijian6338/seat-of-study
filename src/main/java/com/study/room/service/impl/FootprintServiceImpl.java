@@ -39,10 +39,15 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     @Override
     public boolean haveSeat(FootprintDTO footprintDTO) {
         // TODO: 检查该用户之前是否有借座, 但是忘记离开座位的记录 (手动触发, 结束状态, 并且自动计算选择的自习时长)
+        int time = 0;
         if (footprintDTO.getUserId() != null)
             // 直接调用检查时间的方法 (有类似的逻辑)
-            this.checkTime(footprintDTO.getUserId());
+            time = this.checkTime(footprintDTO.getUserId());
         else
+            return false;
+
+        // 还有剩余时间 (上一次借座还在继续)
+        if (time > 0)
             return false;
 
         // TODO: 完成基础逻辑
@@ -51,11 +56,25 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         // 直接映射过去, 填充完整
         BeanUtils.copyProperties(footprintDTO, footprint);
 
+        // 构建新记录, 所以需要 id
+        if (footprint.getId() == null)
+            footprint.setId(Tools.getUUID());
+
+        // 初始化学习时间
+        footprint.setStayTime(0);
+
+        // 如果没有填写学习时间, 默认一个小时 (其实是必填的)
+        if (footprint.getWantedTime() == 0)
+            footprint.setWantedTime(60 * 60);
+
+        // 设置状态为 坐下
+        footprint.setStatus(Footprint.STATUS.IN);
+
         // 时间填充需要补充 (√)
         footprint.setCreatedTime(Tools.getTimeStamp());
-        footprint.setUpdatedTime(Tools.getTimeStamp());
+//        footprint.setUpdatedTime(Tools.getTimeStamp());
 
-        this.update(footprint);
+        this.save(footprint);
 
         return true;
     }
@@ -108,7 +127,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             // 跟新足迹内容
             this.update(footprint);
         }
-        return false;
+        return true;
     }
 
     /**
