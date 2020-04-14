@@ -5,6 +5,7 @@ import com.study.room.configurer.WebMvcConfigurer;
 import com.study.room.core.Result;
 import com.study.room.core.ResultGenerator;
 import com.study.room.dto.FootprintDTO;
+import com.study.room.dto.RoomsReportDTO;
 import com.study.room.model.Footprint;
 import com.study.room.model.Seat;
 import com.study.room.model.User;
@@ -252,6 +253,31 @@ public class SeatController {
             return ResultGenerator.genFailResult("创建失败~");
         else
             return ResultGenerator.genSuccessResult(roomId);
+    }
+
+    @UserLoginToken
+    @PostMapping("/report")
+    public Result checkRoomRep() {
+        List<Seat> list = seatService.findAll();
+        RoomsReportDTO rep = new RoomsReportDTO();
+        rep.setRoomsCount(list.size());
+
+        int availableSeat = 0;
+        int unAvailableSeat = 0;
+        int seatsCount = 0;
+
+
+        for(Seat seat : list) {
+            availableSeat = seat.getSeatsAvailable() + availableSeat;
+            unAvailableSeat = seat.getSeatsUnavailabe() + unAvailableSeat;
+            seatsCount = seat.getSeatsCount() + seatsCount;
+        }
+
+        rep.setAvailableSeats(availableSeat);
+        rep.setSeatsCount(seatsCount);
+        rep.setUnAvailableSeats(unAvailableSeat);
+
+        return ResultGenerator.genSuccessResult(rep);
     }
 
     @ApiIgnore
