@@ -209,7 +209,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     /**
      * @param user_id
      * @Method checkTime
-     * TODO: 根据现在的用户, 检查现在状态为在坐的的数据
+     * TODO: 根据现在的用户, 检查现在状态为在坐的的数据, 返回已经使用的时间
      * @Return int
      * @Exception
      * @Date 2020/3/24 7:49 PM
@@ -237,13 +237,14 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             // 如果没有记录已经坐下的时间, 证明他没有离开过, 直接算就可以了
             if (footprint.getStayTime() == 0) {
 
-                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime()) > footprint.getWantedTime() ? (current_time.getTime() - footprint.getUpdatedTime().getTime()) : 0);
+                // TODO: 如果 (当前时间 - 上次更新时间) < 选择自习时间, 返回 (当前时间 - 上次更新时间); 如果不是, 返回 0 (因为已经用完自习时间了)
+                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime()) < footprint.getWantedTime() ? (current_time.getTime() - footprint.getUpdatedTime().getTime()) : 0);
 
                 // 时间已经用完, 修改状态为离开座位
                 if (time == 0) {
                     footprint.setUpdatedTime(current_time);
-                    // FIXME: 究竟要不要更新自习时间?
-//                    footprint.setStayTime(time);
+                    //究竟要不要更新自习时间? 要√
+                    footprint.setStayTime(footprint.getWantedTime());
                     footprint.setStatus(Footprint.STATUS.OUT);
                     this.update(footprint);
                 }
@@ -252,13 +253,13 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             } else {
                 // 已经有坐下时间, 证明状态已经修改过
 
-                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime()) > footprint.getStayTime() ? (current_time.getTime() - footprint.getUpdatedTime().getTime()) : 0);
+                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime()) < footprint.getStayTime() ? (current_time.getTime() - footprint.getUpdatedTime().getTime()) : 0);
 
                 // 时间已经用完, 修改状态为离开座位
                 if (time == 0) {
                     footprint.setUpdatedTime(current_time);
-                    // FIXME: 究竟要不要更新自习时间?
-//                    footprint.setStayTime(time);
+                    // 究竟要不要更新自习时间? 要√
+                    footprint.setStayTime(footprint.getWantedTime());
                     footprint.setStatus(Footprint.STATUS.OUT);
                     this.update(footprint);
                 }
