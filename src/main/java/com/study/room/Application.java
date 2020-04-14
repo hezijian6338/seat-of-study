@@ -63,8 +63,8 @@ public class Application {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("your swagger2 title~")
-                .description("why you create this project~")
+                .title("study.room")
+                .description("study.room")
                 .termsOfServiceUrl("share.dragonsking.cn")
                 .contact("hezijian6338")
                 .version("1.0")

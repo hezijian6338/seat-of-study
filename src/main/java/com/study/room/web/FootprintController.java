@@ -27,13 +27,13 @@ public class FootprintController {
     @Resource
     private FootprintService footprintService;
 
-    @ApiOperation(value = "checkTime", notes = "查看用户的")
+    @ApiOperation(value = "checkTime", notes = "查看用户的已用时间")
     @UserLoginToken
     @GetMapping("/check/time")
     public Result checkTime() {
         User user = WebMvcConfigurer.getLoginUser();
 
-        // TODO: 返回剩余时间
+        // TODO: 返回已用时间
         int time = footprintService.checkTime(user.getId());
 
         return ResultGenerator.genSuccessResult(time);

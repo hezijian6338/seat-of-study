@@ -19,6 +19,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -27,12 +29,14 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
-* Created by CodeGenerator on 2020/03/21.
-*/
+ * Created by CodeGenerator on 2020/03/21.
+ */
 @Api(value = "seat", tags = "座位管理接口")
 @RestController
 @RequestMapping("/seat")
 public class SeatController {
+    private final Logger logger = LoggerFactory.getLogger(SeatController.class);
+
     @Resource
     private SeatService seatService;
 
@@ -93,17 +97,24 @@ public class SeatController {
         String seats_number = row + "," + col;
         Footprint footprint = footprintService.checkSeatStatus(room_num, seats_number);
 
+        if (user.getId().equals(footprint.getUserId()))
+            return ResultGenerator.genFailResult("自己抢自己?");
+
+        logger.info("正在进行抢座, 自习室编号: {}, 行: {}, 列: {}", room_num, row, col);
+
         // TODO: 检查是否已经在抢座了
         if (grabSeatMap.containsKey(footprint.getId())) {
             // 当前时间减去记录的时间, 看看大不大与 20min
             long time = Tools.getLongTimeStamp() - grabSeatMap.get(footprint.getId()).getTime();
+
+            logger.info("现在已经抢座了 {}ms ~", time);
 
             if (time <= 0) {
                 return ResultGenerator.genFailResult("系统错误~");
             }
 
             // 检查时间是否已经超过 20分钟了
-            if (time >= 20 * 60) {
+            if (time >= 20 * 60 * 1000) {
                 // TODO: 这里需要手动把足迹状态更新为离开, 并且记录黑名单次数
                 footprint.setStatus(Footprint.STATUS.OUT);
 
@@ -116,19 +127,20 @@ public class SeatController {
                 // 黑名单次数大于3, 黑名单状态开启
                 if (badUser.getBadRecord() >= 3) {
                     badUser.setStatus(User.STATUS.BAD);
-
-                    // 跟新被抢座的人的数据
-                    userService.update(badUser);
-
-                    // 设置座位离开, 空出来
-                    seatService.leaveSeat(room_num, row, col);
                 }
+                // 跟新被抢座的人的数据
+                userService.update(badUser);
+
+                // 设置座位离开, 空出来
+                seatService.leaveSeat(room_num, row, col);
 
                 return ResultGenerator.genSuccessResult("你可以进行抢座了~");
+            } else {
+                return ResultGenerator.genSuccessResult("已经抢座了 " + time + "ms");
             }
         }
 
-        if (footprint.getStatus() == Footprint.STATUS.TEMP){
+        if (footprint.getStatus() == Footprint.STATUS.TEMP) {
             return ResultGenerator.genFailResult("用户已经使用暂离, 不允许抢座~");
         }
 
@@ -138,7 +150,7 @@ public class SeatController {
             return ResultGenerator.genSuccessResult("开始抢座~");
         }
 
-        return null;
+        return ResultGenerator.genFailResult("系统错误~");
     }
 
     @ApiOperation(value = "haveSeat", notes = "正常坐下")

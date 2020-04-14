@@ -31,7 +31,7 @@ public class Tools {
     }
 
     public static String getStringTimeStamp() {
-        return Tools.getTimeStamp() + "";
+        return getTimeStamp() + "";
     }
 
     /**

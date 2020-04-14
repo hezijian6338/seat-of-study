@@ -219,6 +219,8 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
                                 return false;
 //                                throw new RuntimeException("401");
                             }
+
+                            logger.info("登陆用户为: {}", user.getStudentNum());
                             return true;
                         }
                     }

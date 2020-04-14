@@ -28,7 +28,7 @@
     AND status = #{status}
   </select>
 
-  <select id="checkSeatStatus" resultType="com.study.room.model.Footprint">
+  <select id="checkSeatStatus" resultMap="BaseResultMap">
     SELECT
     *
     FROM
@@ -40,7 +40,7 @@
   </select>
 
 
-  <select id="checkHistoryByUser" resultType="com.study.room.model.Footprint">
+  <select id="checkHistoryByUser" resultMap="BaseResultMap">
     SELECT
     *
     FROM
