@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -51,6 +52,7 @@ public class FootprintController {
         return ResultGenerator.genSuccessResult(footprints);
     }
 
+    @ApiIgnore
     @UserLoginToken
     @PostMapping
     public Result add(@RequestBody Footprint footprint) {
@@ -58,6 +60,7 @@ public class FootprintController {
         return ResultGenerator.genSuccessResult();
     }
 
+    @ApiIgnore
     @UserLoginToken
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable String id) {
@@ -65,6 +68,7 @@ public class FootprintController {
         return ResultGenerator.genSuccessResult();
     }
 
+    @ApiIgnore
     @UserLoginToken
     @PutMapping
     public Result update(@RequestBody Footprint footprint) {
@@ -72,6 +76,7 @@ public class FootprintController {
         return ResultGenerator.genSuccessResult();
     }
 
+    @ApiIgnore
     @UserLoginToken
     @GetMapping("/{id}")
     public Result detail(@PathVariable String id) {
@@ -79,6 +84,7 @@ public class FootprintController {
         return ResultGenerator.genSuccessResult(footprint);
     }
 
+    @ApiIgnore
     @UserLoginToken
     @GetMapping
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {

@@ -1,10 +1,12 @@
 package com.study.room.service.impl;
 
 import com.study.room.dao.FootprintMapper;
+import com.study.room.dao.SeatMapper;
 import com.study.room.dto.FootprintDTO;
 import com.study.room.model.Footprint;
 import com.study.room.service.FootprintService;
 import com.study.room.core.AbstractService;
+import com.study.room.service.SeatService;
 import com.study.room.utils.Tools;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ import java.util.concurrent.locks.Condition;
 public class FootprintServiceImpl extends AbstractService<Footprint> implements FootprintService {
     @Resource
     private FootprintMapper footprintMapper;
+
+    @Resource
+    private SeatService seatService;
 
     /**
      * @param footprintDTO
@@ -65,7 +70,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
 
         // 如果没有填写学习时间, 默认一个小时 (其实是必填的)
         if (footprint.getWantedTime() == 0)
-            footprint.setWantedTime(60 * 60);
+            footprint.setWantedTime(60 * 60 * 1000);
 
         // 设置状态为 坐下
         footprint.setStatus(Footprint.STATUS.IN);
@@ -308,6 +313,10 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
                     footprint.setStayTime(time);
                     // 用完时间, 更新选择的自习时间
                     footprint.setStatus(Footprint.STATUS.OUT);
+
+                    // TODO: 同时设置座位状态空出来
+                    seatService.leaveSeat(user_id);
+
                     this.update(footprint);
                 }
 
@@ -327,6 +336,10 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
                     footprint.setStayTime(time);
                     // 用完时间, 更新选择的自习时间
                     footprint.setStatus(Footprint.STATUS.OUT);
+
+                    // TODO: 同时设置座位状态空出来
+                    seatService.leaveSeat(user_id);
+
                     this.update(footprint);
                 }
 

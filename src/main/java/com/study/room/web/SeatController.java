@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
@@ -253,6 +254,7 @@ public class SeatController {
             return ResultGenerator.genSuccessResult(roomId);
     }
 
+    @ApiIgnore
     @UserLoginToken
     @PostMapping
     public Result add(@RequestBody Seat seat) {
@@ -260,6 +262,7 @@ public class SeatController {
         return ResultGenerator.genSuccessResult();
     }
 
+    @ApiIgnore
     @UserLoginToken
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable String id) {
@@ -267,6 +270,7 @@ public class SeatController {
         return ResultGenerator.genSuccessResult();
     }
 
+    @ApiIgnore
     @UserLoginToken
     @PutMapping
     public Result update(@RequestBody Seat seat) {
@@ -274,6 +278,7 @@ public class SeatController {
         return ResultGenerator.genSuccessResult();
     }
 
+    @ApiIgnore
     @UserLoginToken
     @GetMapping("/{id}")
     public Result detail(@PathVariable String id) {
@@ -281,6 +286,7 @@ public class SeatController {
         return ResultGenerator.genSuccessResult(seat);
     }
 
+    @ApiIgnore
     @UserLoginToken
     @GetMapping
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
