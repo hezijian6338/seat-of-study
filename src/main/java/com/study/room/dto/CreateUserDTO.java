@@ -11,32 +11,32 @@ public class CreateUserDTO {
     /**
      * 用户名称
      */
-    @ApiModelProperty(value = "学生名称")
+    @ApiModelProperty(name = "name", value = "学生名称 (例子: 何子健)", example="何子健", required=true)
     private String name;
 
 
     /**
      * 学生学号
      */
-    @ApiModelProperty(value = "学生学号")
+    @ApiModelProperty(name = "studentNum", value = "学生学号 (例子: 140202011031)", example="140202011031", required=true)
     private String studentNum;
 
     /**
      * 用户电话
      */
-    @ApiModelProperty(value = "学生电话")
+    @ApiModelProperty(name = "phone", value = "学生电话 (例子: 13160666721)", example="13160666721", required=true)
     private String phone;
 
     /**
      * 0: 普通用户;1: 管理员; 2: 超级管理员
      */
-    @ApiModelProperty(value = "0: 普通用户;1: 管理员; 2: 超级管理员")
+    @ApiModelProperty(name = "role", value = "0: 普通用户;1: 管理员; 2: 超级管理员", example="0", required=true)
     private Integer role;
 
     /**
      * 0: 停用; 1: 启用; -1: 黑名单
      */
-    @ApiModelProperty(value = "0: 停用; 1: 启用; -1: 黑名单")
+    @ApiModelProperty(value = "0: 停用; 1: 启用; -1: 黑名单", example="1", required=true)
     private Integer status;
 
     /**
