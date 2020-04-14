@@ -28,7 +28,7 @@ public class FootprintController {
     @Resource
     private FootprintService footprintService;
 
-    @ApiOperation(value = "checkTime", notes = "查看用户的已用时间")
+    @ApiOperation(value = "checkTime", notes = "查看用户的已用时间 (如果已经在自习室坐下了)")
     @UserLoginToken
     @GetMapping("/check/time")
     public Result checkTime() {
@@ -40,7 +40,7 @@ public class FootprintController {
         return ResultGenerator.genSuccessResult(time);
     }
 
-    @ApiOperation(value = "history", notes = "查看用户的")
+    @ApiOperation(value = "history", notes = "查看用户的历史信息, 可用于检查上一个座位的位置情况 (时间降序)")
     @UserLoginToken
     @GetMapping("/history")
     public Result history() {

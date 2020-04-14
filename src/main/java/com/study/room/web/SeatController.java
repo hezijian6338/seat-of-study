@@ -84,7 +84,7 @@ public class SeatController {
         return ResultGenerator.genFailResult("座位信息有误");
     }
 
-    @ApiOperation(value = "seatAnyway", notes = "抢座位")
+    @ApiOperation(value = "seatAnyway", notes = "抢座位 (座位已经被坐下, 20分钟的抢座时间)")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "自习室编号", name = "room_num", dataType = "String", paramType = "path"),
             @ApiImplicitParam(value = "座位行", name = "row", dataType = "int", paramType = "path"),
@@ -154,7 +154,7 @@ public class SeatController {
         return ResultGenerator.genFailResult("系统错误~");
     }
 
-    @ApiOperation(value = "haveSeat", notes = "正常坐下")
+    @ApiOperation(value = "haveSeat", notes = "正常坐下 (座位为空, 不为空会返回错误信息)")
     @ApiImplicitParam(value = "足迹对象", name = "footprintDTO", dataType = "FootprintDTO", paramType = "body")
     @UserLoginToken
     @PostMapping("/down")
@@ -203,7 +203,7 @@ public class SeatController {
         }
     }
 
-    @ApiOperation(value = "tempLeaveSeat", notes = "暂时离开座位")
+    @ApiOperation(value = "tempLeaveSeat", notes = "暂时离开座位 (默认拥有一个暂离时间)")
     @UserLoginToken
     @PostMapping("/temp/leave")
     public Result tempLeaveSeat() {
@@ -220,7 +220,7 @@ public class SeatController {
         }
     }
 
-    @ApiOperation(value = "leaveSeat", notes = "离开座位")
+    @ApiOperation(value = "leaveSeat", notes = "离开座位 (释放座位为空)")
     @UserLoginToken
     @PostMapping("/leave")
     public Result leaveSeat() {
