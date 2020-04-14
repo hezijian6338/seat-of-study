@@ -96,6 +96,8 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         // TODO: 根据新增加的方法, 返回找到的座位足迹信息
         Footprint footprint = this.findUseSeatByUserId(userId);
 
+        Timestamp current_time = Tools.getTimeStamp();
+
         // 判断状态是否从正常坐下状态
         if (footprint.getStatus() == Footprint.STATUS.IN) {
 //            Footprint footprint = new Footprint();
@@ -115,19 +117,75 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             int staty_time = footprint.getStayTime();
             // 如果暂离不为空, 即是曾经暂离过
             if (staty_time != 0) {
-                // 计算当次自习时间 (当前时间 - 上次更新时间 + 当前已有的时间)
-                staty_time = (int) (Tools.getLongTimeStamp() - footprint.getUpdatedTime().getTime() + staty_time);
+                // 计算当次自习时间
+                staty_time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+                        // 小于自定义时间
+                        < footprint.getWantedTime()
+                        // 当前时间 - 更新时间 + 已经自习时间
+                        ? (current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
+                        // 最大自习时间 + 已经自习时间
+                        : footprint.getWantedTime() + footprint.getStayTime());
                 footprint.setStayTime(staty_time);
             } else {
-                // 没有进行过暂离 (自习时间为空), 直接当前时间 - 更新时间即可
-                staty_time = (int) (Tools.getLongTimeStamp() - footprint.getUpdatedTime().getTime());
+                // 没有进行过暂离 (自习时间为空)
+                staty_time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+                        // 小于自定义时间
+                        < footprint.getWantedTime()
+                        // 当前时间 - 更新时间
+                        ? (current_time.getTime() - footprint.getUpdatedTime().getTime())
+                        // 最大自习时间
+                        : footprint.getWantedTime());
                 footprint.setStayTime(staty_time);
             }
 
             // 跟新足迹内容
             this.update(footprint);
+
+            return true;
         }
-        return true;
+
+        // 判断状态是否从暂离状态离开
+        if (footprint.getStatus() == Footprint.STATUS.TEMP) {
+            // 更新当前时间为离开时间
+            footprint.setUpdatedTime(Tools.getTimeStamp());
+
+            // 状态修改为离开
+            footprint.setStatus(Footprint.STATUS.OUT);
+
+            // TODO: 填充一共总自习时间
+
+            // 存在过暂离的情况, 自习时间本不为空
+            int staty_time = footprint.getStayTime();
+            // 曾经多次暂离
+            if (staty_time != 0) {
+                // 计算当次自习时间
+                staty_time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+                        // 小于自定义时间
+                        < footprint.getWantedTime()
+                        // 当前时间 - 更新时间 + 已经自习时间
+                        ? (current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
+                        // 最大自习时间 + 已经自习时间
+                        : footprint.getWantedTime() + footprint.getStayTime());
+                footprint.setStayTime(staty_time);
+            } else {
+                // 没有进行过暂离 (自习时间为空)
+                staty_time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+                        // 小于自定义时间
+                        < footprint.getWantedTime()
+                        // 当前时间 - 更新时间
+                        ? (current_time.getTime() - footprint.getUpdatedTime().getTime())
+                        // 最大自习时间
+                        : footprint.getWantedTime());
+                footprint.setStayTime(staty_time);
+            }
+
+            // 跟新足迹内容
+            this.update(footprint);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -237,14 +295,18 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             // 如果没有记录已经坐下的时间, 证明他没有离开过, 直接算就可以了
             if (footprint.getStayTime() == 0) {
 
-                // TODO: 如果 (当前时间 - 上次更新时间) < 选择自习时间, 返回 (当前时间 - 上次更新时间); 如果不是, 返回 0 (因为已经用完自习时间了)
-                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime()) < footprint.getWantedTime() ? (current_time.getTime() - footprint.getUpdatedTime().getTime()) : 0);
+                // TODO: 如果 (当前时间 - 上次更新时间) < 选择自习时间, 返回 (当前时间 - 上次更新时间); 如果不是, 返回 最大自习时间 (因为已经用完自习时间了)
+                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+                        < footprint.getWantedTime()
+                        ? (current_time.getTime() - footprint.getUpdatedTime().getTime())
+                        : footprint.getWantedTime());
 
                 // 时间已经用完, 修改状态为离开座位
-                if (time == 0) {
+                if (time >= footprint.getWantedTime()) {
                     footprint.setUpdatedTime(current_time);
                     //究竟要不要更新自习时间? 要√
-                    footprint.setStayTime(footprint.getWantedTime());
+                    footprint.setStayTime(time);
+                    // 用完时间, 更新选择的自习时间
                     footprint.setStatus(Footprint.STATUS.OUT);
                     this.update(footprint);
                 }
@@ -253,13 +315,17 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             } else {
                 // 已经有坐下时间, 证明状态已经修改过
 
-                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime()) < footprint.getStayTime() ? (current_time.getTime() - footprint.getUpdatedTime().getTime()) : 0);
+                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+                        < footprint.getWantedTime()
+                        ? (current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
+                        : footprint.getStayTime() + footprint.getWantedTime());
 
                 // 时间已经用完, 修改状态为离开座位
-                if (time == 0) {
+                if (time >= footprint.getStayTime() + footprint.getWantedTime()) {
                     footprint.setUpdatedTime(current_time);
                     // 究竟要不要更新自习时间? 要√
-                    footprint.setStayTime(footprint.getWantedTime());
+                    footprint.setStayTime(time);
+                    // 用完时间, 更新选择的自习时间
                     footprint.setStatus(Footprint.STATUS.OUT);
                     this.update(footprint);
                 }
@@ -313,15 +379,25 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
      */
     @Override
     public Footprint findUseSeatByUserId(String userId) {
-        tk.mybatis.mapper.entity.Condition condition = new tk.mybatis.mapper.entity.Condition(Footprint.class);
-        Example.Criteria criteria = condition.createCriteria();
-        criteria.andEqualTo("userId", userId);
-        criteria.orEqualTo("status", Footprint.STATUS.IN);
-        criteria.orEqualTo("status", Footprint.STATUS.TEMP);
-        List<Footprint> footprints = this.findByCondition(condition);
+        // 检查在座的情况
+        tk.mybatis.mapper.entity.Condition conditionStateIn = new tk.mybatis.mapper.entity.Condition(Footprint.class);
+        Example.Criteria criteriaStateIn = conditionStateIn.createCriteria();
+        criteriaStateIn.andEqualTo("userId", userId);
+        criteriaStateIn.andEqualTo("status", Footprint.STATUS.IN);
+        List<Footprint> footprintsStateIn = this.findByCondition(conditionStateIn);
 
-        if (footprints.size() != 0) {
-            return footprints.get(0);
+        if (footprintsStateIn.size() != 0)
+            return footprintsStateIn.get(0);
+
+        // 检查暂离情况
+        tk.mybatis.mapper.entity.Condition conditionStateTemp = new tk.mybatis.mapper.entity.Condition(Footprint.class);
+        Example.Criteria criteriaStateTemp = conditionStateTemp.createCriteria();
+        criteriaStateTemp.andEqualTo("userId", userId);
+        criteriaStateTemp.andEqualTo("status", Footprint.STATUS.TEMP);
+        List<Footprint> footprintsStateTemp = this.findByCondition(conditionStateTemp);
+
+        if (footprintsStateTemp.size() != 0) {
+            return footprintsStateTemp.get(0);
         }
 
         return null;
