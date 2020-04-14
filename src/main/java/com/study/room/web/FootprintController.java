@@ -4,6 +4,7 @@ import com.study.room.configurer.UserLoginToken;
 import com.study.room.configurer.WebMvcConfigurer;
 import com.study.room.core.Result;
 import com.study.room.core.ResultGenerator;
+import com.study.room.dao.FootprintMapper;
 import com.study.room.dto.FootprintDTO;
 import com.study.room.model.Footprint;
 import com.study.room.model.User;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +29,9 @@ import java.util.List;
 public class FootprintController {
     @Resource
     private FootprintService footprintService;
+
+    @Resource
+    private FootprintMapper footprintMapper;
 
     @ApiOperation(value = "checkTime", notes = "查看用户的已用时间 (如果已经在自习室坐下了)")
     @UserLoginToken
@@ -50,6 +55,13 @@ public class FootprintController {
         List<Footprint> footprints = footprintService.checkHistoryByUser(user.getId());
 
         return ResultGenerator.genSuccessResult(footprints);
+    }
+
+    @GetMapping("/leader/board")
+    public Result leaderBoard() {
+        List<Footprint> board = footprintMapper.leaderBoard(new Date());
+
+        return ResultGenerator.genSuccessResult(board);
     }
 
     @ApiIgnore

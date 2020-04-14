@@ -4,6 +4,7 @@ import com.study.room.core.Mapper;
 import com.study.room.model.Footprint;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface FootprintMapper extends Mapper<Footprint> {
@@ -27,4 +28,11 @@ public interface FootprintMapper extends Mapper<Footprint> {
      * @Author hezijian6338
      */
     List<Footprint> checkHistoryByUser(@Param("user_id") String user_id);
+
+    /**
+     * TODO: 返回当天排行榜
+     * @Date 2020-04-14 20:54
+     * @Author hezijian6338
+     */
+    List<Footprint> leaderBoard(@Param("updated_time") Date updated_time);
 }
