@@ -59,7 +59,7 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         if (row == 0 || col == 0)
             return -2;
         Seat seats = this.findBy("roomNumber", room_num);
-        String[] seat_list = seats.getSeats().replace("[", "").replace("]", "").split(",");
+        String[] seat_list = seats.getSeats().replace(" ", "").replace("[", "").replace("]", "").split(",");
 
         // 判断获取座位的行数是否大于数组的大小
         if (row <= seat_list.length) {
@@ -70,7 +70,7 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
             if (col <= seat_col.length) {
                 char status = seat_col[col - 1];
                 // 该座位有人, 但是不知道是暂离还是正在坐下但是人离开了
-                if (status == '1') {
+                if (status == Seat.SEAT.FULL) {
                     // 组合座位的格式
                     String seats_number = row + "," + col;
                     // 检查返回的数据
@@ -84,7 +84,7 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                         return 1;
                     }
                 }
-                if (status == '0') {
+                if (status == Seat.SEAT.EMPTY) {
                     return 0;
                 }
             }

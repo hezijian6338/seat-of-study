@@ -240,33 +240,58 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
      */
     @Override
     public boolean pauseSeat(String userId) {
-        // TODO: 构建 orm查询条件
-        tk.mybatis.mapper.entity.Condition condition = new tk.mybatis.mapper.entity.Condition(Footprint.class);
-        condition.createCriteria().andEqualTo("userId", userId).andEqualTo("status", Footprint.STATUS.IN);
+        // TODO: 构建 orm查询条件 (在座 ==> 暂离)
+        tk.mybatis.mapper.entity.Condition conditionIn = new tk.mybatis.mapper.entity.Condition(Footprint.class);
+        conditionIn.createCriteria().andEqualTo("userId", userId).andEqualTo("status", Footprint.STATUS.IN);
 
-        List<Footprint> list = this.findByCondition(condition);
+        List<Footprint> listIn = this.findByCondition(conditionIn);
 
-        if (list.size() == 0) {
+        // TODO: 构建 orm查询条件 (暂离 ==> 在座)
+        tk.mybatis.mapper.entity.Condition conditionTemp = new tk.mybatis.mapper.entity.Condition(Footprint.class);
+        conditionTemp.createCriteria().andEqualTo("userId", userId).andEqualTo("status", Footprint.STATUS.TEMP);
+
+        List<Footprint> listTemp = this.findByCondition(conditionTemp);
+
+        Footprint footprint = null;
+
+        if (listIn.size() == 0 && listTemp.size() == 0) {
             return false;
+        } else if (listIn.size() != 0) {
+            // TODO: 在座 ==> 暂离
+            footprint = listIn.get(0);
+
+            // 更新当前时间为暂停时间
+            footprint.setUpdatedTime(Tools.getTimeStamp());
+
+            // 增加已经自习时间 √ (下列函数已经包含计算已有自习时间了)
+            int time = this.checkTime(userId);
+
+            footprint.setStayTime(time);
+
+            // 状态修改为暂时离开
+            footprint.setStatus(Footprint.STATUS.TEMP);
+
+            // 跟新足迹内容
+            this.update(footprint);
+
+            return true;
+        } else if (listTemp.size() != 0) {
+            // TODO: 暂离 ==> 在座
+            footprint = listIn.get(0);
+
+            // 更新当前时间为暂停时间
+            footprint.setUpdatedTime(Tools.getTimeStamp());
+
+            // 状态修改为在座
+            footprint.setStatus(Footprint.STATUS.IN);
+
+            // 跟新足迹内容
+            this.update(footprint);
+
+            return true;
         }
 
-        Footprint footprint = list.get(0);
-
-        // 更新当前时间为暂停时间
-        footprint.setUpdatedTime(Tools.getTimeStamp());
-
-        // FIXME: 增加已经自习时间
-        int time = this.checkTime(userId);
-
-        footprint.setStayTime(time);
-
-        // 状态修改为暂时离开
-        footprint.setStatus(Footprint.STATUS.TEMP);
-
-        // 跟新足迹内容
-        this.update(footprint);
-
-        return true;
+        return false;
     }
 
     /**
