@@ -11,6 +11,7 @@ import com.study.room.model.User;
 import com.study.room.service.FootprintService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +27,7 @@ import java.util.List;
 /**
 * Created by CodeGenerator on 2020/03/21.
 */
+@Api(value = "footprint", tags = "座位记录信息操作")
 @RestController
 @RequestMapping("/footprint")
 public class FootprintController {
