@@ -89,6 +89,14 @@ public class UserController {
     }
 
     @UserLoginToken
+    @GetMapping("/{id}")
+    public Result getUserInfoById(@PathVariable String id) {
+//        User user = WebMvcConfigurer.getLoginUser();
+        User user = userService.findById(id);
+        return ResultGenerator.genSuccessResult(user);
+    }
+
+    @UserLoginToken
     @GetMapping
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
