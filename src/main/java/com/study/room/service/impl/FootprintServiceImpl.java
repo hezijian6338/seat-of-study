@@ -194,9 +194,9 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     }
 
     /**
+     * @param footprintDTO
      * @Method pauseSeat
      * TODO: 根据完整的足迹实体来进行暂时离开座位的操作 (但其实可以直接根据 user_id来进行操作)
-     * @param footprintDTO
      * @Return boolean
      * @Exception
      * @Date 2020/4/6 8:48 PM
@@ -229,9 +229,9 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     }
 
     /**
+     * @param userId
      * @Method pauseSeat
      * TODO: (新) 暂停座位方法
-     * @param userId
      * @Return boolean
      * @Exception
      * @Date 2020/4/8 7:52 PM
@@ -282,77 +282,107 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     @Override
     public int checkTime(String user_id) {
         // 检查当前用户在坐的数据
-        List<Footprint> footprintList = footprintMapper.checkTime(user_id, Footprint.STATUS.IN);
+        List<Footprint> footprintListIn = footprintMapper.checkTime(user_id, Footprint.STATUS.IN);
+
+        List<Footprint> footprintListTemp = footprintMapper.checkTime(user_id, Footprint.STATUS.TEMP);
+
+        Footprint footprint = null;
 
         // 用户第一次借座, 数组就为 0
-        if (footprintList.size() == 0)
+        if (footprintListIn.size() == 0 && footprintListTemp.size() == 0)
             return 0;
+        else if (footprintListIn.size() != 0) {
+            // TODO: 在座情况
 
-        Footprint footprint = footprintList.get(0);
+            footprint = footprintListIn.get(0);
+            if (footprint == null)
+                return 0;
+            else {
+                int time = 0;
 
-        if (footprint == null)
-            return 0;
-        else {
-            int time = 0;
+                Timestamp current_time = Tools.getTimeStamp();
+
+                // 如果没有记录已经坐下的时间, 证明他没有离开过, 直接算就可以了
+                if (footprint.getStayTime() == 0) {
+
+                    // TODO: 如果 (当前时间 - 上次更新时间) < 选择自习时间, 返回 (当前时间 - 上次更新时间); 如果不是, 返回 最大自习时间 (因为已经用完自习时间了)
+                    time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+                            < footprint.getWantedTime()
+                            ? (current_time.getTime() - footprint.getUpdatedTime().getTime())
+                            : footprint.getWantedTime());
+
+                    // 时间已经用完, 修改状态为离开座位
+                    if (time >= footprint.getWantedTime()) {
+                        footprint.setUpdatedTime(current_time);
+                        //究竟要不要更新自习时间? 要√
+                        footprint.setStayTime(time);
+                        // 用完时间, 更新选择的自习时间
+                        footprint.setStatus(Footprint.STATUS.OUT);
+
+                        // TODO: 同时设置座位状态空出来
+                        seatService.leaveSeat(user_id);
+
+                        this.update(footprint);
+                    }
+
+                    return time;
+                } else {
+                    // 已经有坐下时间, 证明状态已经修改过
+
+                    time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+                            < footprint.getWantedTime()
+                            ? (current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
+                            : footprint.getStayTime() + footprint.getWantedTime());
+
+                    // 时间已经用完, 修改状态为离开座位
+                    if (time >= footprint.getStayTime() + footprint.getWantedTime()) {
+                        footprint.setUpdatedTime(current_time);
+                        // 究竟要不要更新自习时间? 要√
+                        footprint.setStayTime(time);
+                        // 用完时间, 更新选择的自习时间
+                        footprint.setStatus(Footprint.STATUS.OUT);
+
+                        // TODO: 同时设置座位状态空出来
+                        seatService.leaveSeat(user_id);
+
+                        this.update(footprint);
+                    }
+
+                    return time;
+                }
+            }
+        } else if (footprintListTemp.size() != 0) {
+            // TODO: 暂离状态
+            footprint = footprintListTemp.get(0);
 
             Timestamp current_time = Tools.getTimeStamp();
 
-            // 如果没有记录已经坐下的时间, 证明他没有离开过, 直接算就可以了
-            if (footprint.getStayTime() == 0) {
+            int time = 0;
 
-                // TODO: 如果 (当前时间 - 上次更新时间) < 选择自习时间, 返回 (当前时间 - 上次更新时间); 如果不是, 返回 最大自习时间 (因为已经用完自习时间了)
-                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
-                        < footprint.getWantedTime()
-                        ? (current_time.getTime() - footprint.getUpdatedTime().getTime())
-                        : footprint.getWantedTime());
+            time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime()) > 20 * 60 * 1000 ? 0 : (current_time.getTime() - footprint.getUpdatedTime().getTime()));
 
-                // 时间已经用完, 修改状态为离开座位
-                if (time >= footprint.getWantedTime()) {
-                    footprint.setUpdatedTime(current_time);
-                    //究竟要不要更新自习时间? 要√
-                    footprint.setStayTime(time);
-                    // 用完时间, 更新选择的自习时间
-                    footprint.setStatus(Footprint.STATUS.OUT);
+            // 如果时间返回为 0, 代表时间已经用完了, 设置离开, 释放座位
+            if (time == 0) {
+                footprint.setStatus(Footprint.STATUS.OUT);
 
-                    // TODO: 同时设置座位状态空出来
-                    seatService.leaveSeat(user_id);
+                this.update(footprint);
 
-                    this.update(footprint);
-                }
+                seatService.leaveSeat(user_id);
 
-                return time;
-            } else {
-                // 已经有坐下时间, 证明状态已经修改过
-
-                time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
-                        < footprint.getWantedTime()
-                        ? (current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
-                        : footprint.getStayTime() + footprint.getWantedTime());
-
-                // 时间已经用完, 修改状态为离开座位
-                if (time >= footprint.getStayTime() + footprint.getWantedTime()) {
-                    footprint.setUpdatedTime(current_time);
-                    // 究竟要不要更新自习时间? 要√
-                    footprint.setStayTime(time);
-                    // 用完时间, 更新选择的自习时间
-                    footprint.setStatus(Footprint.STATUS.OUT);
-
-                    // TODO: 同时设置座位状态空出来
-                    seatService.leaveSeat(user_id);
-
-                    this.update(footprint);
-                }
-
+                return 0;
+            }else {
                 return time;
             }
         }
+
+        return 0;
     }
 
     /**
-     * @Method checkSeatStatus
-     * TODO: 根据自习室编号, 座位编号, 寻找当前的座位信息
      * @param room_number
      * @param seats_number
+     * @Method checkSeatStatus
+     * TODO: 根据自习室编号, 座位编号, 寻找当前的座位信息
      * @Return com.study.room.model.Footprint
      * @Exception
      * @Date 2020/4/5 8:36 PM
@@ -381,9 +411,9 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     }
 
     /**
+     * @param userId
      * @Method findUseSeatByUserId
      * TODO: 根据用户 id信息, 返回正在用的座位信息
-     * @param userId
      * @Return com.study.room.model.Footprint
      * @Exception
      * @Date 2020/4/11 7:37 PM
@@ -417,9 +447,9 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
     }
 
     /**
+     * @param userId
      * @Method checkHistoryByUser
      * TODO: 根据用户 id信息, 返回前五条历史记录
-     * @param userId
      * @Return java.util.List<com.study.room.model.Footprint>
      * @Exception
      * @Date 2020/4/11 7:37 PM
