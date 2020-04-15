@@ -96,4 +96,20 @@ public class UserController {
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
+
+    @UserLoginToken
+    @PutMapping("/modification/password")
+    public Result changePassword(@RequestParam String oldPass, @RequestParam String newPass) {
+        User user = WebMvcConfigurer.getLoginUser();
+
+        if (user.getPassword().equals(MD5Utils.StringToMD5_hex(oldPass))) {
+            user.setPassword(MD5Utils.StringToMD5_hex(newPass));
+        } else {
+            return ResultGenerator.genFailResult("原密码错误, 请再次尝试~");
+        }
+
+        this.update(user);
+
+        return ResultGenerator.genSuccessResult();
+    }
 }
