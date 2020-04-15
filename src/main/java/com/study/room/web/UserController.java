@@ -2,6 +2,7 @@ package com.study.room.web;
 
 import com.study.room.configurer.PassToken;
 import com.study.room.configurer.UserLoginToken;
+import com.study.room.configurer.WebMvcConfigurer;
 import com.study.room.core.Result;
 import com.study.room.core.ResultGenerator;
 import com.study.room.dto.CreateUserDTO;
@@ -80,9 +81,10 @@ public class UserController {
     }
 
     @UserLoginToken
-    @GetMapping("/{id}")
-    public Result detail(@PathVariable String id) {
-        User user = userService.findById(id);
+    @GetMapping("/info")
+    public Result detail() {
+        User user = WebMvcConfigurer.getLoginUser();
+
         return ResultGenerator.genSuccessResult(user);
     }
 
