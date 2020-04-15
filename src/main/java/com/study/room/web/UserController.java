@@ -105,7 +105,7 @@ public class UserController {
         return ResultGenerator.genSuccessResult(pageInfo);
     }
 
-    @UserLoginToken
+//    @UserLoginToken
     @GetMapping("/admin/list")
     public Result getAdminUser() {
         List<User> user = userService.findAdminUsers();
