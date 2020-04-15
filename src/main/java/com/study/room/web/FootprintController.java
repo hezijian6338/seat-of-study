@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -57,11 +59,19 @@ public class FootprintController {
         return ResultGenerator.genSuccessResult(footprints);
     }
 
-    @ApiOperation(value = "leaderBoard", notes = "当天排行榜列表 (稍后开放其他日期)")
+    @ApiOperation(value = "leaderBoard", notes = "选择日期展示排行榜 (例子: 2020/04/14)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "年", name = "year", dataType = "String", paramType = "path"),
+            @ApiImplicitParam(value = "月", name = "month", dataType = "String", paramType = "path"),
+            @ApiImplicitParam(value = "日", name = "day", dataType = "String", paramType = "path")
+    })
     @UserLoginToken
-    @GetMapping("/leader/board")
-    public Result leaderBoard() {
-        List<Footprint> board = footprintMapper.leaderBoard(new Date());
+    @GetMapping("/leader/board/{year}/{month}/{day}")
+    public Result leaderBoard(@PathVariable String year, @PathVariable String month, @PathVariable String day) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//注意月份是MM
+        Date date = simpleDateFormat.parse(year + "-" + month + "-" + day);
+
+        List<Footprint> board = footprintMapper.leaderBoard(date);
 
         return ResultGenerator.genSuccessResult(board);
     }
