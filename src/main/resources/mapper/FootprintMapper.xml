@@ -56,6 +56,6 @@
     FROM
     <include refid="fp" />
     where
-    date_format(#{updated_time},'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')
+    date_format(#{updated_time},'%Y-%m-%d') = date_format(updated_time,'%Y-%m-%d')
   </select>
 </mapper>

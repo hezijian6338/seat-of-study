@@ -57,6 +57,8 @@ public class FootprintController {
         return ResultGenerator.genSuccessResult(footprints);
     }
 
+    @ApiOperation(value = "leaderBoard", notes = "当天排行榜列表 (稍后开放其他日期)")
+    @UserLoginToken
     @GetMapping("/leader/board")
     public Result leaderBoard() {
         List<Footprint> board = footprintMapper.leaderBoard(new Date());
