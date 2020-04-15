@@ -8,8 +8,11 @@ import com.study.room.utils.MD5Utils;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Condition;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
@@ -38,5 +41,17 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             logger.warn("{} 用户, {} 密码, 登录失败~", username, password);
             return null;
         }
+    }
+
+    @Override
+    public List<User> findAdminUsers() {
+        Condition condition = new Condition(User.class);
+        Example.Criteria criteria = condition.createCriteria();
+        criteria.orEqualTo("role", User.ROLE.ADMIN);
+        criteria.orEqualTo("role", User.ROLE.SUPER);
+
+        List<User> user = this.findByCondition(condition);
+
+        return user;
     }
 }

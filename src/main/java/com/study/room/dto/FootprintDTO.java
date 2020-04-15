@@ -27,7 +27,7 @@ public class FootprintDTO {
     /**
      * 学生希望自习的时间
      */
-    @ApiModelProperty(value = "学生希望的自习时间 (60m/120m/180), 需要换算成 ms", example="60000", required=true)
+    @ApiModelProperty(value = "学生希望的自习时间 (60m/120m/180), 需要换算成 ms", example="600000", required=true)
     private int wantedTime;
 
     /**

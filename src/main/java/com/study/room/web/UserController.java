@@ -106,6 +106,14 @@ public class UserController {
     }
 
     @UserLoginToken
+    @GetMapping("/admin/list")
+    public Result getAdminUser() {
+        List<User> user = userService.findAdminUsers();
+
+        return ResultGenerator.genSuccessResult(user);
+    }
+
+    @UserLoginToken
     @PutMapping("/modification/password")
     public Result changePassword(@RequestParam String oldPass, @RequestParam String newPass) {
         User user = WebMvcConfigurer.getLoginUser();
