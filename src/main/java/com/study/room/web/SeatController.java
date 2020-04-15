@@ -156,7 +156,7 @@ public class SeatController {
     }
 
     @ApiOperation(value = "haveSeat", notes = "正常坐下 (座位为空, 不为空会返回错误信息)")
-    @ApiImplicitParam(value = "足迹对象", name = "footprintDTO", dataType = "FootprintDTO", paramType = "body")
+//    @ApiImplicitParam(value = "足迹对象", name = "footprintDTO", dataType = "com.study.room.dto.FootprintDTO", paramType = "body")
     @UserLoginToken
     @PostMapping("/down")
     public Result haveSeat(@RequestBody FootprintDTO footprintDTO) {
