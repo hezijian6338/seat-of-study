@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
-* Created by CodeGenerator on 2020/03/21.
-*/
+ * Created by CodeGenerator on 2020/03/21.
+ */
 @Api(value = "footprint", tags = "座位记录信息操作")
 @RestController
 @RequestMapping("/footprint")
@@ -82,17 +82,27 @@ public class FootprintController {
 
     @ApiOperation(value = "counterBoard", notes = "选择日期返回自习室的统计列表 (例子: 2020)")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "自习室编号", name = "roomNum", dataType = "String", paramType = "path"),
+            @ApiImplicitParam(value = "自习室编号", name = "roomNumber", dataType = "String", paramType = "path"),
             @ApiImplicitParam(value = "年", name = "year", dataType = "String", paramType = "path")
     })
     @UserLoginToken
-    @GetMapping("/{roomNumber}/counter/board/{year}")
+    @GetMapping("/room/{roomNumber}/counter/board/{year}")
     public Result counterBoard(@PathVariable String roomNumber, @PathVariable String year) throws ParseException {
         SimpleDateFormat simpleDateFormatYear = new SimpleDateFormat("yyyy");//注意月份是MM
         Date dateYear = simpleDateFormatYear.parse(year);
         List<Footprint> count = footprintMapper.counterBoard(roomNumber, dateYear);
 
         return ResultGenerator.genSuccessResult(count);
+    }
+
+    @ApiOperation(value = "checkOnSeatListByRoomNumber", notes = "根据自习室编号返回在座人员列表")
+    @ApiImplicitParam(value = "自习室编号", name = "roomNumber", dataType = "String", paramType = "path")
+    @UserLoginToken
+    @GetMapping("/room/{roomNumber}")
+    public Result checkOnSeatListByRoomNumber(@PathVariable String roomNumber) {
+        footprintService.checkOnSeatListByRoomNumber(roomNumber);
+
+        return ResultGenerator.genSuccessResult(roomNumber);
     }
 
     @ApiIgnore

@@ -11,12 +11,12 @@ import com.study.room.utils.Tools;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
 
 
 /**
@@ -486,4 +486,26 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         List<Footprint> footprints = footprintMapper.checkHistoryByUser(userId);
         return footprints;
     }
+
+    /**
+     * @Method checkOnSeatListByRoomNumber
+     * TODO: 根据自习室编号, 返回当前在使用的用户列表
+     * @param roomNumber
+     * @Return java.util.List<com.study.room.model.Footprint>
+     * @Exception
+     * @Date 2020-04-25 12:08
+     * @Author hezijian6338
+     * @Version 1.0
+     */
+    @Override
+    public List<Footprint> checkOnSeatListByRoomNumber(String roomNumber) {
+        Condition condition = new Condition(Footprint.class);
+        Example.Criteria criteria = condition.createCriteria();
+        criteria.andEqualTo("roomNumber", roomNumber);
+        criteria.andEqualTo("status", Footprint.STATUS.IN);
+        List<Footprint> footprints = this.findByCondition(condition);
+
+        return footprints;
+    }
+
 }

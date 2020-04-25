@@ -76,4 +76,11 @@ public interface FootprintService extends Service<Footprint> {
      * @Author hezijian6338
      */
     List<Footprint> checkHistoryByUser(String userId);
+
+    /**
+     * TODO: 根据自习室编号
+     * @Date 2020-04-25 12:02
+     * @Author hezijian6338
+     */
+    List<Footprint> checkOnSeatListByRoomNumber(String roomNumber);
 }
