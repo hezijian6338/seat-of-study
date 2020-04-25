@@ -103,7 +103,7 @@ public class UserController {
     @ApiOperation(value = "getUserInfoByNo", notes = "根据学号返回学生信息")
     @ApiImplicitParam(value = "学号", name = "studentNum", dataType = "String", paramType = "path")
     @UserLoginToken
-    @GetMapping("/{studentNum}")
+    @GetMapping("/studentNum/{studentNum}")
     public Result getUserInfoByNo(@PathVariable String studentNum) {
 //        User user = WebMvcConfigurer.getLoginUser();
         User user = userService.findBy("studentNum", studentNum);
@@ -139,6 +139,20 @@ public class UserController {
         }
 
         this.update(user);
+
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @UserLoginToken
+    @PostMapping("/admin/reset/studentNum/{studentNum}")
+    public Result resetPasswordByAdmin(@PathVariable String studentNum) {
+        User user = userService.findBy("studentNum", studentNum);
+        if (user == null) {
+            return ResultGenerator.genFailResult("用户不存在~");
+        }
+
+        user.setPassword(MD5Utils.StringToMD5_hex("admin"));
+        userService.save(user);
 
         return ResultGenerator.genSuccessResult();
     }
