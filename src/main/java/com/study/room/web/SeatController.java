@@ -281,7 +281,7 @@ public class SeatController {
     }
 
     @ApiOperation(value = "deleteRoom", notes = "根据自习室编号进行删除自习室")
-    @ApiImplicitParam(value = "自习室编号", name = "deleteRoom", dataType = "String", paramType = "path")
+    @ApiImplicitParam(value = "自习室编号", name = "roomNumber", dataType = "String", paramType = "path")
     @UserLoginToken
     @DeleteMapping("/roomNum/{roomNumber}")
     public Result deleteRoom(@PathVariable String roomNumber) {
@@ -293,6 +293,8 @@ public class SeatController {
         // TODO: 检查自习室是否存在正在自习的人员或者信息
         if (seatService.checkRoom(roomNumber)) {
             seatService.deleteById(seat.getId());
+        } else {
+            return ResultGenerator.genFailResult("自习室有人正在使用, 无法删除~");
         }
 
         return ResultGenerator.genSuccessResult();
