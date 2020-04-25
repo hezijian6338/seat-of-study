@@ -301,7 +301,7 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
     /**
      * @Method checkRoom
      * TODO: 根据自习室编号检查该自习室是否有正在使用的座位
-     * @param roomNum
+     * @param roomNumber
      * @Return boolean
      * @Exception
      * @Date 2020-04-25 14:36
@@ -309,8 +309,8 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
      * @Version 1.0
      */
     @Override
-    public boolean checkRoom(String roomNum) {
-        Seat seat = this.findBy("roomNum", roomNum);
+    public boolean checkRoom(String roomNumber) {
+        Seat seat = this.findBy("roomNumber", roomNumber);
         if (seat == null)
             return false;
         String[] seatList = seat.getSeats().replace(" ", "").replace("[", "").replace("]", "").split(",");
@@ -318,7 +318,7 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
         // TODO: 获取行数
         for (String rows : seatList) {
             // 检查每行座位是否有包含在座的信息 (等于 -1就是找不到在座信息)
-            if (rows.indexOf('1') == -1) {
+            if (rows.indexOf('1') != -1) {
                 return false;
             }
         }

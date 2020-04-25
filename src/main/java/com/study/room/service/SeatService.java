@@ -68,5 +68,5 @@ public interface SeatService extends Service<Seat> {
      * @Return boolean
      * @Author hezijian6338
      */
-    boolean checkRoom(String roomNum);
+    boolean checkRoom(String roomNumber);
 }
