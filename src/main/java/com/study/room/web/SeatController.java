@@ -325,12 +325,21 @@ public class SeatController {
     }
 
     // @ApiIgnore
-    @ApiOperation(value = "detail", notes = "根据自习室编号查找自习室信息")
+    @ApiOperation(value = "getSeatByRoomNumber", notes = "根据自习室编号查找自习室信息")
     @ApiImplicitParam(value = "自习室编号", name = "roomNumber", dataType = "String", paramType = "path")
     @UserLoginToken
-    @GetMapping("/{roomNumber}")
-    public Result detail(@PathVariable String roomNumber) {
+    @GetMapping("/roomNumber/{roomNumber}")
+    public Result getSeatByRoomNumber(@PathVariable String roomNumber) {
         Seat seat = seatService.findBy("roomNumber", roomNumber);
+        return ResultGenerator.genSuccessResult(seat);
+    }
+
+    @ApiOperation(value = "detail", notes = "根据 id查找自习室信息")
+    @ApiImplicitParam(value = "id", name = "id", dataType = "String", paramType = "path")
+    @UserLoginToken
+    @GetMapping("/{id}")
+    public Result detail(@PathVariable String id) {
+        Seat seat = seatService.findById(id);
         return ResultGenerator.genSuccessResult(seat);
     }
 
