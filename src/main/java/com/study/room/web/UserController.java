@@ -127,6 +127,8 @@ public class UserController {
         return ResultGenerator.genSuccessResult(user);
     }
 
+    @ApiOperation(value = "getUserInfoByNo", notes = "用户重置密码")
+//    @ApiImplicitParam(value = "学号", name = "studentNum", dataType = "String", paramType = "path")
     @UserLoginToken
     @PutMapping("/modification/password")
     public Result changePassword(@RequestParam String oldPass, @RequestParam String newPass) {
@@ -143,6 +145,8 @@ public class UserController {
         return ResultGenerator.genSuccessResult();
     }
 
+    @ApiOperation(value = "resetPasswordByAdmin", notes = "根据学生学号重置学生密码")
+    @ApiImplicitParam(value = "学号", name = "studentNum", dataType = "String", paramType = "path")
     @UserLoginToken
     @PostMapping("/admin/reset/studentNum/{studentNum}")
     public Result resetPasswordByAdmin(@PathVariable String studentNum) {

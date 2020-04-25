@@ -267,7 +267,7 @@ public class SeatController {
         int seatsCount = 0;
 
 
-        for(Seat seat : list) {
+        for (Seat seat : list) {
             availableSeat = seat.getSeatsAvailable() + availableSeat;
             unAvailableSeat = seat.getSeatsUnavailabe() + unAvailableSeat;
             seatsCount = seat.getSeatsCount() + seatsCount;
@@ -278,6 +278,24 @@ public class SeatController {
         rep.setUnAvailableSeats(unAvailableSeat);
 
         return ResultGenerator.genSuccessResult(rep);
+    }
+
+    @ApiOperation(value = "deleteRoom", notes = "根据自习室编号进行删除自习室")
+    @ApiImplicitParam(value = "自习室编号", name = "deleteRoom", dataType = "String", paramType = "path")
+    @UserLoginToken
+    @DeleteMapping("/roomNum/{roomNumber}")
+    public Result deleteRoom(@PathVariable String roomNumber) {
+        Seat seat = seatService.findBy("roomNumber", roomNumber);
+        if (seat == null) {
+            return ResultGenerator.genFailResult("自习室不存在");
+        }
+
+        // TODO: 检查自习室是否存在正在自习的人员或者信息
+        if (seatService.checkRoom(roomNumber)) {
+            seatService.deleteById(seat.getId());
+        }
+
+        return ResultGenerator.genSuccessResult();
     }
 
     @ApiIgnore

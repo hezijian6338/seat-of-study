@@ -297,4 +297,32 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
 
         return seat.getId();
     }
+
+    /**
+     * @Method checkRoom
+     * TODO: 根据自习室编号检查该自习室是否有正在使用的座位
+     * @param roomNum
+     * @Return boolean
+     * @Exception
+     * @Date 2020-04-25 14:36
+     * @Author hezijian6338
+     * @Version 1.0
+     */
+    @Override
+    public boolean checkRoom(String roomNum) {
+        Seat seat = this.findBy("roomNum", roomNum);
+        if (seat == null)
+            return false;
+        String[] seatList = seat.getSeats().replace(" ", "").replace("[", "").replace("]", "").split(",");
+
+        // TODO: 获取行数
+        for (String rows : seatList) {
+            // 检查每行座位是否有包含在座的信息 (等于 -1就是找不到在座信息)
+            if (rows.indexOf('1') == -1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

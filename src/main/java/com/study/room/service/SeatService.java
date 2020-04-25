@@ -56,5 +56,17 @@ public interface SeatService extends Service<Seat> {
      */
     boolean leaveSeat(String userId);
 
+    /**
+     * TODO: 创建自习室
+     * @Return java.lang.String
+     * @Author hezijian6338
+     */
     String createRoom(String room_num, int row, int col);
+
+    /**
+     * TODO: 检查自习室是否还有座位正在使用
+     * @Return boolean
+     * @Author hezijian6338
+     */
+    boolean checkRoom(String roomNum);
 }
