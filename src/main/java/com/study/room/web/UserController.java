@@ -156,7 +156,7 @@ public class UserController {
         }
 
         user.setPassword(MD5Utils.StringToMD5_hex("admin"));
-        userService.save(user);
+        userService.update(user);
 
         return ResultGenerator.genSuccessResult();
     }
