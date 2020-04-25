@@ -14,6 +14,8 @@ import com.github.pagehelper.PageInfo;
 import com.study.room.utils.MD5Utils;
 import com.study.room.utils.Tools;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,8 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
-* Created by CodeGenerator on 2020/03/21.
-*/
+ * Created by CodeGenerator on 2020/03/21.
+ */
 @Api(value = "userController", tags = "用户操作接口")
 @RestController
 @RequestMapping("/user")
@@ -45,7 +47,7 @@ public class UserController {
         }
     }
 
-//    @UserLoginToken
+    //    @UserLoginToken
     @PostMapping
     public Result add(@RequestBody CreateUserDTO userDTO) {
         User user = new User();
@@ -88,11 +90,23 @@ public class UserController {
         return ResultGenerator.genSuccessResult(user);
     }
 
+    @ApiOperation(value = "getUserInfoById", notes = "根据 User id返回学生信息")
+    @ApiImplicitParam(value = "id", name = "id", dataType = "String", paramType = "path")
     @UserLoginToken
     @GetMapping("/{id}")
     public Result getUserInfoById(@PathVariable String id) {
 //        User user = WebMvcConfigurer.getLoginUser();
         User user = userService.findById(id);
+        return ResultGenerator.genSuccessResult(user);
+    }
+
+    @ApiOperation(value = "getUserInfoByNo", notes = "根据学号返回学生信息")
+    @ApiImplicitParam(value = "学号", name = "studentNum", dataType = "String", paramType = "path")
+    @UserLoginToken
+    @GetMapping("/{studentNum}")
+    public Result getUserInfoByNo(@PathVariable String studentNum) {
+//        User user = WebMvcConfigurer.getLoginUser();
+        User user = userService.findBy("studentNum", studentNum);
         return ResultGenerator.genSuccessResult(user);
     }
 
@@ -105,7 +119,7 @@ public class UserController {
         return ResultGenerator.genSuccessResult(pageInfo);
     }
 
-//    @UserLoginToken
+    //    @UserLoginToken
     @GetMapping("/admin/list")
     public Result getAdminUser() {
         List<User> user = userService.findAdminUsers();

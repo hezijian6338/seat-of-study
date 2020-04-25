@@ -35,4 +35,11 @@ public interface FootprintMapper extends Mapper<Footprint> {
      * @Author hezijian6338
      */
     List<Footprint> leaderBoard(@Param("updated_time") Date updated_time);
+
+    /**
+     * TODO: 返回年度使用列表
+     * @Date 2020-04-25 11:43
+     * @Author hezijian6338
+     */
+    List<Footprint> counterBoard(@Param("roomNumber") String roomNumber, @Param("updated_time") Date updated_time);
 }

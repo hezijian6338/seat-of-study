@@ -22,7 +22,9 @@ import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * Created by CodeGenerator on 2020/03/21.
@@ -76,6 +78,21 @@ public class FootprintController {
         List<Footprint> board = footprintMapper.leaderBoard(date);
 
         return ResultGenerator.genSuccessResult(board);
+    }
+
+    @ApiOperation(value = "counterBoard", notes = "选择日期返回自习室的统计列表 (例子: 2020)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "自习室编号", name = "roomNum", dataType = "String", paramType = "path"),
+            @ApiImplicitParam(value = "年", name = "year", dataType = "String", paramType = "path")
+    })
+    @UserLoginToken
+    @GetMapping("/{roomNumber}/counter/board/{year}")
+    public Result counterBoard(@PathVariable String roomNumber, @PathVariable String year) throws ParseException {
+        SimpleDateFormat simpleDateFormatYear = new SimpleDateFormat("yyyy");//注意月份是MM
+        Date dateYear = simpleDateFormatYear.parse(year);
+        List<Footprint> count = footprintMapper.counterBoard(roomNumber, dateYear);
+
+        return ResultGenerator.genSuccessResult(count);
     }
 
     @ApiIgnore
