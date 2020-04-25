@@ -293,11 +293,11 @@ public class SeatController {
         // TODO: 检查自习室是否存在正在自习的人员或者信息
         if (seatService.checkRoom(roomNumber)) {
             seatService.deleteById(seat.getId());
+            return ResultGenerator.genSuccessResult();
         } else {
             return ResultGenerator.genFailResult("自习室有人正在使用, 无法删除~");
         }
 
-        return ResultGenerator.genSuccessResult();
     }
 
     @ApiIgnore
