@@ -182,7 +182,7 @@ public class Footprint {
      *
      * @return montent_tag - 心情标签 (数组, 用 ,分隔)
      */
-    public String getMontentTag() {
+    public String getMomtentTag() {
         return momentTag;
     }
 
@@ -191,7 +191,7 @@ public class Footprint {
      *
      * @param montentTag 心情标签 (数组, 用 ,分隔)
      */
-    public void setMontentTag(String montentTag) {
+    public void setMomtentTag(String montentTag) {
         this.momentTag = montentTag;
     }
 

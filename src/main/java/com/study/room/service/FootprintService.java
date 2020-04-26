@@ -83,4 +83,11 @@ public interface FootprintService extends Service<Footprint> {
      * @Author hezijian6338
      */
     List<Footprint> checkOnSeatListByRoomNumber(String roomNumber);
+
+    /**
+     * TODO: 根据用户 id查找入座信息 (作废 ==>> findUseSeatByUserId)
+     * @Date 2020-04-26 18:33
+     * @Author hezijian6338
+     */
+    Footprint findInfoByUser(String userId);
 }

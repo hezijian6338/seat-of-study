@@ -508,4 +508,33 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         return footprints;
     }
 
+    /**
+     * @Method findInfoByUser
+     * TODO: 根据用户 id查找入座的信息, 返回给前端 (作废 ==>> findUseSeatByUserId)
+     * @param userId
+     * @Return com.study.room.model.Footprint
+     * @Exception
+     * @Date 2020-04-26 18:34
+     * @Author hezijian6338
+     * @Version 1.0
+     */
+    @Override
+    public Footprint findInfoByUser(String userId) {
+        // 检查当前用户在坐的数据
+        List<Footprint> footprintListIn = footprintMapper.checkTime(userId, Footprint.STATUS.IN);
+
+        List<Footprint> footprintListTemp = footprintMapper.checkTime(userId, Footprint.STATUS.TEMP);
+
+        if (footprintListIn.size() == 0 && footprintListTemp.size() == 0)
+            return null;
+        else if (footprintListIn.size() != 0) {
+            return footprintListIn.get(0);
+        }
+        else if (footprintListTemp.size() != 0) {
+            return footprintListTemp.get(0);
+        }
+
+        return null;
+    }
+
 }

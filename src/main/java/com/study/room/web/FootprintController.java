@@ -47,8 +47,14 @@ public class FootprintController {
 
         // TODO: 返回已用时间
         int time = footprintService.checkTime(user.getId());
+        Footprint footprint = footprintService.findUseSeatByUserId(user.getId());
 
-        return ResultGenerator.genSuccessResult(time);
+        HashMap<String, Object> map = new HashMap();
+        map.put("studiedTime", time);
+        map.put("wantedTime", footprint.getWantedTime());
+        map.put("momentTag", footprint.getMomtentTag());
+
+        return ResultGenerator.genSuccessResult(map);
     }
 
     @ApiOperation(value = "history", notes = "查看用户的历史信息, 可用于检查上一个座位的位置情况 (时间降序)")
