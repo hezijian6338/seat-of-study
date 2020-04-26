@@ -49,6 +49,9 @@ public class FootprintController {
         int time = footprintService.checkTime(user.getId());
         Footprint footprint = footprintService.findUseSeatByUserId(user.getId());
 
+        if (footprint == null)
+            return ResultGenerator.genFailResult("你好像没有进行自习的座位~");
+
         HashMap<String, Object> map = new HashMap();
         map.put("studiedTime", time);
         map.put("wantedTime", footprint.getWantedTime());
