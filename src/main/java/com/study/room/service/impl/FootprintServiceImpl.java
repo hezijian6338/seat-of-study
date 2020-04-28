@@ -277,7 +277,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             return true;
         } else if (listTemp.size() != 0) {
             // TODO: 暂离 ==> 在座
-            footprint = listIn.get(0);
+            footprint = listTemp.get(0);
 
             // 更新当前时间为暂停时间
             footprint.setUpdatedTime(Tools.getTimeStamp());

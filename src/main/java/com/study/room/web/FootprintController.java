@@ -39,7 +39,7 @@ public class FootprintController {
     @Resource
     private FootprintMapper footprintMapper;
 
-    @ApiOperation(value = "checkTime", notes = "查看用户的已用时间 (如果已经在自习室坐下了)")
+    @ApiOperation(value = "checkTime", notes = "查看用户的已用时间 (如果已经在自习室坐下了) (1: 在座; 0: 暂离)")
     @UserLoginToken
     @GetMapping("/check/time")
     public Result checkTime() {
@@ -53,7 +53,17 @@ public class FootprintController {
             return ResultGenerator.genFailResult("你好像没有进行自习的座位~");
 
         HashMap<String, Object> map = new HashMap();
-        map.put("studiedTime", time);
+
+        if (footprint.getStatus() == Footprint.STATUS.IN) {
+            map.put("status", Footprint.STATUS.IN);
+            map.put("studiedTime", time);
+        }
+
+        if (footprint.getStatus() == Footprint.STATUS.TEMP) {
+            map.put("status", Footprint.STATUS.TEMP);
+            map.put("tempLeaveTime", time);
+        }
+
         map.put("wantedTime", footprint.getWantedTime());
         map.put("momentTag", footprint.getMomtentTag());
 
