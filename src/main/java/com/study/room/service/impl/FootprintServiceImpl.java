@@ -354,13 +354,23 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
                 } else {
                     // 已经有坐下时间, 证明状态已经修改过
 
-                    time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+                    // FIXME: 这里有一个歧义: 无法判断是暂离回来, 还是时间片用完了, 再补充时间 (还是说补充时间直接新增一条记录 (但是好像往后统计不太好操作))
+
+                    // TODO: 这一段代码的逻辑: 默认当前的期望自习时间是新的, 所以会出现 实际自习时间 > 期望自习时间 的情况 (因为加上了之前的自习时间)
+//                    time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+//                            < footprint.getWantedTime()
+//                            ? (current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
+//                            : footprint.getStayTime() + footprint.getWantedTime());
+
+                    // TODO: 这一段代码的逻辑: 默认一条 Footprint记录即为一次坐下, 一次确认自习时间 (无法自主延长, 延长即为第二条记录)
+                    time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
                             < footprint.getWantedTime()
                             ? (current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
-                            : footprint.getStayTime() + footprint.getWantedTime());
+                            : footprint.getWantedTime());
+
 
                     // 时间已经用完, 修改状态为离开座位
-                    if (time >= footprint.getStayTime() + footprint.getWantedTime()) {
+                    if (time >= footprint.getWantedTime()) {
                         footprint.setUpdatedTime(current_time);
                         // 究竟要不要更新自习时间? 要√
                         footprint.setStayTime(time);
