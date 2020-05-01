@@ -68,7 +68,7 @@ public class FootprintController {
         }
 
         map.put("wantedTime", footprint.getWantedTime());
-        map.put("momentTag", footprint.getMomtentTag());
+        map.put("momentTag", footprint.getMomentTag());
 
         return ResultGenerator.genSuccessResult(map);
     }
