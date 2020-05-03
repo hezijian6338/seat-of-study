@@ -105,13 +105,6 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
 
         // 判断状态是否从正常坐下状态
         if (footprint.getStatus() == Footprint.STATUS.IN) {
-//            Footprint footprint = new Footprint();
-
-            // 直接映射过去, 填充完整
-//            BeanUtils.copyProperties(footprintDTO, footprint);
-
-            // 更新当前时间为离开时间
-            footprint.setUpdatedTime(Tools.getTimeStamp());
 
             // 状态修改为离开
             footprint.setStatus(Footprint.STATUS.OUT);
@@ -123,13 +116,25 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             // 如果暂离不为空, 即是曾经暂离过
             if (staty_time != 0) {
                 // 计算当次自习时间
+
+                // TODO: 以下的代码参考 checkTime方法, 取消一次记录可以多次续时
+//                staty_time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
+//                        // 小于自定义时间
+//                        < footprint.getWantedTime()
+//                        // 当前时间 - 更新时间 + 已经自习时间
+//                        ? (current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
+//                        // 最大自习时间 + 已经自习时间
+//                        : footprint.getWantedTime() + footprint.getStayTime());
+
+                // TODO: 单次记录, 单次时间
                 staty_time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
                         // 小于自定义时间
                         < footprint.getWantedTime()
                         // 当前时间 - 更新时间 + 已经自习时间
                         ? (current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
-                        // 最大自习时间 + 已经自习时间
-                        : footprint.getWantedTime() + footprint.getStayTime());
+                        // 最大自习时间
+                        : footprint.getWantedTime());
+
                 footprint.setStayTime(staty_time);
             } else {
                 // 没有进行过暂离 (自习时间为空)
@@ -163,6 +168,8 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
             int staty_time = footprint.getStayTime();
             // 曾经多次暂离
             if (staty_time != 0) {
+
+                // TODO: 暂离的也一样, 参照上面离开的注释
                 // 计算当次自习时间
                 staty_time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime())
                         // 小于自定义时间
@@ -170,7 +177,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
                         // 当前时间 - 更新时间 + 已经自习时间
                         ? (current_time.getTime() - footprint.getUpdatedTime().getTime() + footprint.getStayTime())
                         // 最大自习时间 + 已经自习时间
-                        : footprint.getWantedTime() + footprint.getStayTime());
+                        : footprint.getWantedTime());
                 footprint.setStayTime(staty_time);
             } else {
                 // 没有进行过暂离 (自习时间为空)
