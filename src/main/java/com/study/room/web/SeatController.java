@@ -139,7 +139,7 @@ public class SeatController {
                 // 更新被抢座座位的足迹信息
                 footprintService.update(footprint);
 
-                return ResultGenerator.genSuccessResult("你可以进行抢座了~");
+                return ResultGenerator.genSuccessResult("你可以进行坐下了~");
             } else {
                 return ResultGenerator.genSuccessResult("已经抢座了 " + time + "ms");
             }
