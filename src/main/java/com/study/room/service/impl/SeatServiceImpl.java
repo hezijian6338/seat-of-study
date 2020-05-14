@@ -76,13 +76,21 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                     // 检查返回的数据
                     Footprint footprint = footprintService.checkSeatStatus(room_num, seats_number);
 
-                    // TODO: 存在一种情况就是: 游离数据, 座位坐下了, 但是没有足迹数据 (需要释放座位)
+                    // TODO: 存在一种情况就是: 游离数据, 座位坐下了, 但是没有该座位的足迹数据 (需要释放座位)
                     if (footprint == null) {
                         boolean result = this.leaveSeat(room_num, row, col);
                         if (result)
                             return SEAT.AVAILABLE;
                         else
                             return SEAT.ERROR;
+                    }
+
+                    // 只做了对数据进行检索的处理, 没有进行状态过期判断 √
+                    // TODO: 根据返回的足迹信息进行对自己的状态进行检查
+                    int time = footprintService.checkTime(footprint.getUserId());
+                    // 这两个状态都是足迹所在的用户会释放座位的状态或者是没有信息的状态
+                    if (time == footprint.getWantedTime() || time == 0) {
+                        return SEAT.AVAILABLE;
                     }
 
                     // 暂离
