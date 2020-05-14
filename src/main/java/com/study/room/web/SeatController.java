@@ -136,6 +136,9 @@ public class SeatController {
                 // 设置座位离开, 空出来
                 seatService.leaveSeat(room_num, row, col);
 
+                // 更新被抢座座位的足迹信息
+                footprintService.update(footprint);
+
                 return ResultGenerator.genSuccessResult("你可以进行抢座了~");
             } else {
                 return ResultGenerator.genSuccessResult("已经抢座了 " + time + "ms");
