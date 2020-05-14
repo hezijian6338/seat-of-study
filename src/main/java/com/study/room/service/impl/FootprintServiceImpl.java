@@ -434,10 +434,15 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
         // 如果该座位信息存在历史记录的
         if (footprints != null) {
 
-            // 取第一条并返回
-            Footprint footprint = footprints.get(0);
+            // 不等于 null也有可能是空对象
+            if (footprints.size() != 0) {
+                // 取第一条并返回
+                Footprint footprint = footprints.get(0);
 
-            return footprint;
+                return footprint;
+            } else {
+                return null;
+            }
         } else {
             // 如果不存在记录, 返回空值
             return null;

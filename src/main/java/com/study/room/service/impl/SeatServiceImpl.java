@@ -75,6 +75,16 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                     String seats_number = row + "," + col;
                     // 检查返回的数据
                     Footprint footprint = footprintService.checkSeatStatus(room_num, seats_number);
+
+                    // TODO: 存在一种情况就是: 游离数据, 座位坐下了, 但是没有足迹数据 (需要释放座位)
+                    if (footprint == null) {
+                        boolean result = this.leaveSeat(room_num, row, col);
+                        if (result)
+                            return 0;
+                        else
+                            return -2;
+                    }
+
                     // 暂离
                     if (footprint.getStatus() == Footprint.STATUS.OUT) {
                         return -1;
