@@ -160,6 +160,20 @@ public class SeatController {
     @UserLoginToken
     @PostMapping("/down")
     public Result haveSeat(@RequestBody FootprintDTO footprintDTO) {
+        User user = WebMvcConfigurer.getLoginUser();
+
+        // TODO: 检查用户的黑名单次数是否超过控制次数
+        if (user.getBadRecord() > User.BAD.BADCOUNT) {
+
+            // 如果该用户状态超过黑名单录入次数, 但是状态不是黑名单状态, 手动更新状态
+            if (user.getStatus() != User.STATUS.BAD) {
+                user.setStatus(User.STATUS.BAD);
+                userService.update(user);
+            }
+            return ResultGenerator.genFailResult("已列入黑名单, 无法进行座位查阅与借座~");
+        }
+
+
         String room_num = null;
         int row = 0;
         int col = 0;

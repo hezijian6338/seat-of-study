@@ -80,22 +80,22 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                     if (footprint == null) {
                         boolean result = this.leaveSeat(room_num, row, col);
                         if (result)
-                            return 0;
+                            return SEAT.AVAILABLE;
                         else
-                            return -2;
+                            return SEAT.ERROR;
                     }
 
                     // 暂离
                     if (footprint.getStatus() == Footprint.STATUS.TEMP) {
-                        return -1;
+                        return SEAT.FULL_TEMP;
                     }
                     // 正常坐着 (人不在了, 可以抢座)
                     if (footprint.getStatus() == Footprint.STATUS.IN) {
-                        return 1;
+                        return SEAT.FULL;
                     }
                 }
                 if (status == Seat.SEAT.EMPTY) {
-                    return 0;
+                    return SEAT.AVAILABLE;
                 }
             }
         }
