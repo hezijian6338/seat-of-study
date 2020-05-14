@@ -5,26 +5,26 @@ import com.study.room.configurer.WebMvcConfigurer;
 import com.study.room.core.Result;
 import com.study.room.core.ResultGenerator;
 import com.study.room.dao.FootprintMapper;
+import com.study.room.dto.BoardDTO;
 import com.study.room.dto.FootprintDTO;
 import com.study.room.model.Footprint;
 import com.study.room.model.User;
 import com.study.room.service.FootprintService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.study.room.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by CodeGenerator on 2020/03/21.
@@ -38,6 +38,9 @@ public class FootprintController {
 
     @Resource
     private FootprintMapper footprintMapper;
+
+    @Resource
+    private UserService userService;
 
     @ApiOperation(value = "checkTime", notes = "查看用户的已用时间 (如果已经在自习室坐下了) (1: 在座; 0: 暂离)")
     @UserLoginToken
@@ -65,7 +68,7 @@ public class FootprintController {
         }
 
         map.put("wantedTime", footprint.getWantedTime());
-        map.put("momentTag", footprint.getMomtentTag());
+        map.put("momentTag", footprint.getMomentTag());
 
         return ResultGenerator.genSuccessResult(map);
     }
@@ -96,7 +99,20 @@ public class FootprintController {
 
         List<Footprint> board = footprintMapper.leaderBoard(date);
 
-        return ResultGenerator.genSuccessResult(board);
+        if (board.size() == 0)
+            return ResultGenerator.genSuccessResult();
+
+        List<BoardDTO> boardsWithUser = new ArrayList<>();
+
+        for (Footprint fp: board) {
+            User user = userService.findById(fp.getUserId());
+            BoardDTO boardDTO = new BoardDTO();
+            BeanUtils.copyProperties(fp, boardDTO);
+            boardDTO.setUser(user);
+            boardsWithUser.add(boardDTO);
+        }
+
+        return ResultGenerator.genSuccessResult(boardsWithUser);
     }
 
     @ApiOperation(value = "counterBoard", notes = "选择日期返回自习室的统计列表 (例子: 2020)")

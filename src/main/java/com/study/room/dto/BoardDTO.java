@@ -1,94 +1,60 @@
-package com.study.room.model;
+package com.study.room.dto;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
+import com.study.room.model.User;
+import io.swagger.annotations.ApiModelProperty;
 
-public class Footprint {
-
-    public interface STATUS {
-        /**
-         * 正常坐下
-         */
-        Integer IN = 1;
-
-        /**
-         * 正常离开
-         */
-        Integer OUT = -1;
-
-        /**
-         * 暂时离开
-         */
-        Integer TEMP = 0;
-    }
-
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
-
-    @Column(name = "user_id")
+/**
+ * Created by Macbook on 2020/5/1.
+ */
+public class BoardDTO {
+    @ApiModelProperty(value = "用户 id")
     private String userId;
 
     /**
      * 自习室编号
      */
-    @Column(name = "room_number")
+    @ApiModelProperty(value = "自习室编号", example="za101", required=true)
     private String roomNumber;
 
     /**
      * 由  row + _ + col 组成
      */
-    @Column(name = "seats_number")
+    @ApiModelProperty(value = "座位编号 (例子: 5, 6; 代表第五行第六列)", example="1,3", required=true)
     private String seatsNumber;
 
     /**
      * 学生希望自习的时间
      */
-    @Column(name = "wanted_time")
+    @ApiModelProperty(value = "学生希望的自习时间 (60m/120m/180), 需要换算成 ms", example="600000", required=true)
     private int wantedTime;
 
     /**
      * 存放时间戳差
      */
-    @Column(name = "stay_time")
+    @ApiModelProperty(value = "已经自习的时间")
     private int stayTime;
 
     /**
      * 0: 暂时离开(保留90分钟); 1: 正常坐下(时间选择); -1: 正常离开(结束计时)
      */
+    @ApiModelProperty(value = "0: 暂时离开(保留90分钟); 1: 正常坐下(时间选择); -1: 正常离开(结束计时)")
     private Integer status;
 
     /**
      * 心情标签 (数组, 用 ,分隔)
      */
-    @Column(name = "moment_tag")
+    @ApiModelProperty(value = "心情标签")
     private String momentTag;
 
-    /**
-     * 坐下时间
-     */
-    @Column(name = "created_time")
-    private Timestamp createdTime;
+    private User user;
 
-    /**
-     * 更新时间
-     */
-    @Column(name = "updated_time")
-    private Timestamp updatedTime;
 
-    /**
-     * @return id
-     */
-    public String getId() {
-        return id;
+    public User getUser() {
+        return user;
     }
 
-    /**
-     * @param id
-     */
-    public void setId(String id) {
-        this.id = id;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
@@ -189,62 +155,17 @@ public class Footprint {
     /**
      * 设置心情标签 (数组, 用 ,分隔)
      *
-     * @param momentTag 心情标签 (数组, 用 ,分隔)
+     * @param montentTag 心情标签 (数组, 用 ,分隔)
      */
-    public void setMomentTag(String momentTag) {
-        this.momentTag = momentTag;
+    public void setMomentTag(String montentTag) {
+        this.momentTag = montentTag;
     }
 
-    /**
-     * 获取坐下时间
-     *
-     * @return created_time - 坐下时间
-     */
-    public Timestamp getCreatedTime() {
-        return createdTime;
-    }
 
-    /**
-     * 设置坐下时间
-     *
-     * @param createdTime 坐下时间
-     */
-    public void setCreatedTime(Timestamp createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    /**
-     * 获取更新时间
-     *
-     * @return updated_time - 更新时间
-     */
-    public Timestamp getUpdatedTime() {
-        return updatedTime;
-    }
-
-    /**
-     * 设置更新时间
-     *
-     * @param updatedTime 更新时间
-     */
-    public void setUpdatedTime(Timestamp updatedTime) {
-        this.updatedTime = updatedTime;
-    }
-
-    /**
-     * 设置学生希望自习的时间
-     *
-     * @param wantedTime 自习时间
-     */
     public void setWantedTime(int wantedTime) {
         this.wantedTime = wantedTime;
     }
 
-    /**
-     * 返回学生希望自习的时间
-     *
-     * @return wantedTime 自习时间
-     */
     public int getWantedTime() {
         return wantedTime;
     }
