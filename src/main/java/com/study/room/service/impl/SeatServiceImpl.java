@@ -86,11 +86,11 @@ public class SeatServiceImpl extends AbstractService<Seat> implements SeatServic
                     }
 
                     // 暂离
-                    if (footprint.getStatus() == Footprint.STATUS.OUT) {
+                    if (footprint.getStatus() == Footprint.STATUS.TEMP) {
                         return -1;
                     }
                     // 正常坐着 (人不在了, 可以抢座)
-                    if (footprint.getStatus() == Footprint.STATUS.TEMP) {
+                    if (footprint.getStatus() == Footprint.STATUS.IN) {
                         return 1;
                     }
                 }
