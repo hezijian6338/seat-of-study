@@ -352,7 +352,11 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
                         footprint.setStatus(Footprint.STATUS.OUT);
 
                         // TODO: 同时设置座位状态空出来
-                        seatService.leaveSeat(user_id);
+                        // leaveSeat(String userId) 会把 footprint再操作一次, 所以不采用 √
+//                        seatService.leaveSeat(user_id);
+                        int row = footprint.getRow();
+                        int col = footprint.getCol();
+                        seatService.leaveSeat(footprint.getRoomNumber(), row, col);
 
                         this.update(footprint);
                     }
@@ -385,7 +389,10 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
                         footprint.setStatus(Footprint.STATUS.OUT);
 
                         // TODO: 同时设置座位状态空出来
-                        seatService.leaveSeat(user_id);
+                        // leaveSeat(String userId) 会把 footprint再操作一次, 所以不采用 √
+                        int row = footprint.getRow();
+                        int col = footprint.getCol();
+                        seatService.leaveSeat(footprint.getRoomNumber(), row, col);
 
                         this.update(footprint);
                     }
@@ -401,7 +408,7 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
 
             int time = 0;
 
-            time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime()) > 20 * 60 * 1000 ? 0 : (current_time.getTime() - footprint.getUpdatedTime().getTime()));
+            time = Math.toIntExact((current_time.getTime() - footprint.getUpdatedTime().getTime()) > Footprint.TIME.TEMP_TEST ? 0 : (current_time.getTime() - footprint.getUpdatedTime().getTime()));
 
             // 如果时间返回为 0, 代表时间已经用完了, 设置离开, 释放座位
             if (time == 0) {
@@ -409,7 +416,9 @@ public class FootprintServiceImpl extends AbstractService<Footprint> implements 
 
                 this.update(footprint);
 
-                seatService.leaveSeat(user_id);
+                int row = footprint.getRow();
+                int col = footprint.getCol();
+                seatService.leaveSeat(footprint.getRoomNumber(), row, col);
 
                 return 0;
             }else {

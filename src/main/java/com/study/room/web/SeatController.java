@@ -116,7 +116,7 @@ public class SeatController {
             }
 
             // 检查时间是否已经超过 20分钟了
-            if (time >= 20 * 60 * 1000) {
+            if (time >= Footprint.TIME.GRAB_TEST) {
                 // TODO: 这里需要手动把足迹状态更新为离开, 并且记录黑名单次数
                 footprint.setStatus(Footprint.STATUS.OUT);
 
@@ -133,7 +133,7 @@ public class SeatController {
                 // 跟新被抢座的人的数据
                 userService.update(badUser);
 
-                // 设置座位离开, 空出来
+                // 设置座位离开, 空出来 (不与 footprint冲突)
                 seatService.leaveSeat(room_num, row, col);
 
                 // 更新被抢座座位的足迹信息
@@ -200,24 +200,32 @@ public class SeatController {
             return ResultGenerator.genFailResult("自习室座位编号为空~");
         }
 
-        // 检查该座位是否能够坐下
-        Boolean isAvailable = seatService.haveSeat(room_num, row, col);
-        Boolean isSeat = false;
+        // TODO: 修改有可能回滚的情况
+        int status = seatService.checkSeat(room_num, row, col);
 
-        // 如果可以, 则留下足迹
-        if (isAvailable) {
-            if (footprintDTO.getUserId() == null)
-                footprintDTO.setUserId(WebMvcConfigurer.getLoginUser().getId());
-            isSeat = footprintService.haveSeat(footprintDTO);
+        // 座位能够坐下, 业务逻辑上不存在错误回滚, 除非是代码执行上
+        if (status == SeatServiceImpl.SEAT.AVAILABLE) {
+            // 检查该座位是否能够坐下
+            Boolean isAvailable = seatService.haveSeat(room_num, row, col);
+            Boolean isSeat = false;
+
+            // 如果可以, 则留下足迹
+            if (isAvailable) {
+                if (footprintDTO.getUserId() == null)
+                    footprintDTO.setUserId(WebMvcConfigurer.getLoginUser().getId());
+                isSeat = footprintService.haveSeat(footprintDTO);
+            } else {
+                // 不可以坐下, 返回信息
+                // FIXME: 这里应该缺失一个回滚...
+                return ResultGenerator.genFailResult("该座位无法坐下, 请稍后再试~");
+            }
+            if (isAvailable && isSeat) {
+                return ResultGenerator.genSuccessResult();
+            } else {
+                return ResultGenerator.genFailResult("系统错误, 无法留下足迹~");
+            }
         } else {
-            // 不可以坐下, 返回信息
-            // FIXME: 这里应该缺失一个回滚...
-            return ResultGenerator.genFailResult("该座位无法坐下, 请稍后再试~");
-        }
-        if (isAvailable && isSeat) {
-            return ResultGenerator.genSuccessResult();
-        } else {
-            return ResultGenerator.genFailResult("系统错误, 无法留下足迹~");
+            return ResultGenerator.genFailResult("系统错误");
         }
     }
 

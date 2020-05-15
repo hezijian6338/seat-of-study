@@ -22,6 +22,28 @@ public class Footprint {
         Integer TEMP = 0;
     }
 
+    public interface TIME {
+        /**
+         * 暂离
+         */
+        Integer TEMP = 20 * 60 * 1000;
+
+        /**
+         * 暂离 (test)
+         */
+        Integer TEMP_TEST = 2 * 60 * 1000;
+
+        /**
+         * 抢座
+         */
+        Integer GRAB = 20 * 60 * 1000;
+
+        /**
+         * 抢座 (test)
+         */
+        Integer GRAB_TEST = 2 * 60 * 1000;
+    }
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -247,5 +269,32 @@ public class Footprint {
      */
     public int getWantedTime() {
         return wantedTime;
+    }
+
+    /**
+     * 座位的行列数组
+     *
+     * @return String[] 行列数组
+     */
+    private String[] getSeatsOfRowCol() {
+        return this.seatsNumber.split(",");
+    }
+
+    /**
+     * 座位的行列
+     *
+     * @return row 行
+     */
+    public int getRow() {
+        return Integer.parseInt(this.getSeatsOfRowCol()[0]);
+    }
+
+    /**
+     * 座位的行列
+     *
+     * @return col 列
+     */
+    public int getCol() {
+        return Integer.parseInt(this.getSeatsOfRowCol()[1]);
     }
 }
