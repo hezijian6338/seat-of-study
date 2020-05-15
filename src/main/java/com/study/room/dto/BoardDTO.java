@@ -3,6 +3,8 @@ package com.study.room.dto;
 import com.study.room.model.User;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.Objects;
+
 /**
  * Created by Macbook on 2020/5/1.
  */
@@ -13,19 +15,19 @@ public class BoardDTO {
     /**
      * 自习室编号
      */
-    @ApiModelProperty(value = "自习室编号", example="za101", required=true)
+    @ApiModelProperty(value = "自习室编号", example = "za101", required = true)
     private String roomNumber;
 
     /**
      * 由  row + _ + col 组成
      */
-    @ApiModelProperty(value = "座位编号 (例子: 5, 6; 代表第五行第六列)", example="1,3", required=true)
+    @ApiModelProperty(value = "座位编号 (例子: 5, 6; 代表第五行第六列)", example = "1,3", required = true)
     private String seatsNumber;
 
     /**
      * 学生希望自习的时间
      */
-    @ApiModelProperty(value = "学生希望的自习时间 (60m/120m/180), 需要换算成 ms", example="600000", required=true)
+    @ApiModelProperty(value = "学生希望的自习时间 (60m/120m/180), 需要换算成 ms", example = "600000", required = true)
     private int wantedTime;
 
     /**
@@ -168,5 +170,17 @@ public class BoardDTO {
 
     public int getWantedTime() {
         return wantedTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o instanceof BoardDTO) {
+            BoardDTO inItem = (BoardDTO) o;
+            return Objects.equals(userId, inItem.getUserId());
+        }
+        return false;
     }
 }

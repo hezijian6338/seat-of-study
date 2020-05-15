@@ -109,7 +109,13 @@ public class FootprintController {
             BoardDTO boardDTO = new BoardDTO();
             BeanUtils.copyProperties(fp, boardDTO);
             boardDTO.setUser(user);
-            boardsWithUser.add(boardDTO);
+            if (boardsWithUser.contains(boardDTO)) {
+                int index = boardsWithUser.indexOf(boardDTO);
+                BoardDTO boardDTO1 = boardsWithUser.get(index);
+                boardDTO1.setStayTime(boardDTO.getStayTime() + boardDTO1.getStayTime());
+            } else {
+                boardsWithUser.add(boardDTO);
+            }
         }
 
         return ResultGenerator.genSuccessResult(boardsWithUser);
