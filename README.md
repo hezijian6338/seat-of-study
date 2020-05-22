@@ -2,6 +2,10 @@
 基于种子项目, 进行二次修改的 SpringBoot进行开发
 ## 项目路径
 ```
+├── README.md
+├── pom.xml
+├── seat-of-study-room.iml
+└── target
 src
 ├── main
 │   ├── java
